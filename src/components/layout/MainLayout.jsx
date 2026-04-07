@@ -28,22 +28,22 @@ const MainLayout = () => {
     {
       name: "Pengaduan",
       icon: <Megaphone size={20} />,
-      path: "/dashboard-host/laporan",
+      path: "",
     },
     {
       name: "Request",
       icon: <PenTool size={20} />,
-      path: "/dashboard-host/laporan",
+      path: "",
     },
     {
       name: "Contact",
       icon: <Contact size={20} />,
-      path: "/dashboard-host/laporan",
+      path: "",
     },
     {
       name: "Pengaturan",
       icon: <Settings size={20} />,
-      path: "/dashboard-host/laporan",
+      path: "",
     },
   ];
 
