@@ -47,6 +47,14 @@ const MainLayout = () => {
     },
   ];
 
+  const FinanceMenu = [
+      {
+      name: "Beranda",
+      icon: <LayoutDashboard size={20} />,
+      path: "/dashboard-finance",
+      },
+    ]
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#ff8000] via-white to-white p-4 md:p-6 flex flex-col gap-4 md:gap-6 font-inter overflow-hidden relative">
       {/* 1. Kirim fungsi toggle ke Topbar */}
