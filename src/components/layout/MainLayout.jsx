@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Outlet } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 import Sidebar from "./Sidebar";
 import Topbar from "./Topbar";
 import {
@@ -9,11 +9,34 @@ import {
   PenTool,
   Contact,
   Settings,
+  ShoppingCart,
+  Package,
 } from "lucide-react";
 
 const MainLayout = () => {
   // Buka Tutup Sidebar
   const [isSidebarOpen, setSidebarOpen] = useState(false);
+  const location = useLocation();
+  // Tentukan role berdasarkan URL
+  const isProcurement = location.pathname.includes("/dashboard-procurement");
+  // Konfigurasi Menu Procurement
+  const procurementMenu = [
+    {
+      name: "Beranda",
+      icon: <LayoutDashboard size={20} />,
+      path: "/dashboard-procurement",
+    },
+    {
+      name: "Request Order",
+      icon: <ShoppingCart size={20} />,
+      path: "/dashboard-procurement/request",
+    },
+    {
+      name: "Inventory",
+      icon: <Package size={20} />,
+      path: "/dashboard-procurement/inventory",
+    },
+  ];
   const hostMenu = [
     {
       name: "Beranda",
@@ -57,18 +80,19 @@ const MainLayout = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#ff8000] via-white to-white p-4 md:p-6 flex flex-col gap-4 md:gap-6 font-inter overflow-hidden relative">
-      {/* 1. Kirim fungsi toggle ke Topbar */}
-      <Topbar toggleSidebar={() => setSidebarOpen(!isSidebarOpen)} />
+      <Topbar
+        roleName={isProcurement ? "Procurement" : "Host"}
+        toggleSidebar={() => setSidebarOpen(!isSidebarOpen)}
+      />
 
       <div className="flex flex-1 gap-6 overflow-hidden items-start relative">
-        {/* 2. Kirim state dan fungsi tutup ke Sidebar */}
+        {/* Kirim menu yang sesuai ke Sidebar */}
         <Sidebar
-          menuItems={hostMenu}
+          menuItems={isProcurement ? procurementMenu : hostMenu}
           isOpen={isSidebarOpen}
           closeSidebar={() => setSidebarOpen(false)}
         />
 
-        {/* Overlay: Layar hitam transparan saat sidebar muncul di mobile */}
         {isSidebarOpen && (
           <div
             className="fixed inset-0 bg-black/20 backdrop-blur-sm z-[998] lg:hidden"
