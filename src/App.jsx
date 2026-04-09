@@ -5,6 +5,8 @@ import MainLayout from "./components/layout/MainLayout";
 import BerandaHost from "./pages/host/BerandaHost";
 import LaporanHost from "./pages/host/LaporanHost";
 import BerandaProcurement from "./pages/procurement/BerandaProcurement"; 
+import BerandaFinance from "./pages/finance/BerandaFinance";
+import PenghasilanFinance from "./pages/finance/PenghasilanFinance";
 
 function App() {
   return (
@@ -21,6 +23,11 @@ function App() {
         {/* Dashboard Role: PROCUREMENT */}
         <Route path="/dashboard-procurement" element={<MainLayout />}>
           <Route index element={<BerandaProcurement />} />
+        </Route>
+         {/* Dashboard Role: Finance */}
+        <Route path="/dashboard-finance" element={<MainLayout />}>
+          <Route index element={<BerandaFinance />} />
+          <Route path="penghasilan" element={<PenghasilanFinance />} />
         </Route>
       </Routes>
     </Router>

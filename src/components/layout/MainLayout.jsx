@@ -11,6 +11,7 @@ import {
   Settings,
   ShoppingCart,
   Package,
+  Wallet,
 } from "lucide-react";
 
 const MainLayout = () => {
@@ -19,6 +20,7 @@ const MainLayout = () => {
   const location = useLocation();
   // Tentukan role berdasarkan URL
   const isProcurement = location.pathname.includes("/dashboard-procurement");
+  const isFinance = location.pathname.includes("/dashboard-finance");
   // Konfigurasi Menu Procurement
   const procurementMenu = [
     {
@@ -76,7 +78,13 @@ const MainLayout = () => {
       icon: <LayoutDashboard size={20} />,
       path: "/dashboard-finance",
       },
-    ]
+
+      {
+      name: "Penghasilan",
+      icon: <Wallet size={20} />,
+      path: "penghasilan",
+      },
+    ];
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#ff8000] via-white to-white p-4 md:p-6 flex flex-col gap-4 md:gap-6 font-inter overflow-hidden relative">
@@ -88,7 +96,7 @@ const MainLayout = () => {
       <div className="flex flex-1 gap-6 overflow-hidden items-start relative">
         {/* Kirim menu yang sesuai ke Sidebar */}
         <Sidebar
-          menuItems={isProcurement ? procurementMenu : hostMenu}
+          menuItems={isProcurement ? procurementMenu : isFinance ? FinanceMenu : hostMenu}
           isOpen={isSidebarOpen}
           closeSidebar={() => setSidebarOpen(false)}
         />
