@@ -15,7 +15,6 @@ const Sidebar = ({ menuItems, isOpen, closeSidebar }) => {
     `}>
       <div className="flex justify-between items-center mb-6">
         <h3 className="text-lg font-medium">Menu</h3>
-        {/* Tombol Close hanya muncul di mobile */}
         <button onClick={closeSidebar} className="lg:hidden text-gray-500 p-2">✕</button>
       </div>
       
@@ -36,7 +35,6 @@ const Sidebar = ({ menuItems, isOpen, closeSidebar }) => {
                       : 'text-gray-600 hover:text-orange-500 hover:bg-orange-50/30'
                   }`}
                 >
-                  {/* Indikator aktif di samping */}
                   {isActive && (
                     <div className="absolute left-0 w-1 h-6 bg-orange-500 rounded-r-lg" />
                   )}

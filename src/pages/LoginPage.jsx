@@ -14,6 +14,8 @@ const LoginPage = () => {
       navigate("/dashboard-host");
     } else if (email === "finance" && password === "123") {
       navigate("/dashboard-finance");
+    } else if (email === "procurement" && password === "123") {
+      navigate("/dashboard-procurement");
     } else {
       alert("Email atau Password salah! (Gunakan password: 123)");
     }
@@ -24,15 +26,15 @@ const LoginPage = () => {
       {/* Wrapper (Card) */}
       <div className="w-full max-w-[420px] bg-white/65 backdrop-blur-xl border border-orange-100 rounded-[20px] p-8 shadow-2xl animate-slide-up">
         <div className="flex flex-col items-center mb-8 animate-fade-in">
-        <div className="mb-6 animate-fade-in">
-          <img src={logoVermillion} alt="Logo" className="h-16 w-auto" />
-        </div>
-        <h2 className="text-xl font-bold text-gray-800 text-center mb-1">
-          Login
-        </h2>
-        <p className="text-sm text-gray-500 text-center mb-8">
-          Silahkan login untuk akses sistem
-        </p>
+          <div className="mb-6 animate-fade-in">
+            <img src={logoVermillion} alt="Logo" className="h-16 w-auto" />
+          </div>
+          <h2 className="text-xl font-bold text-gray-800 text-center mb-1">
+            Login
+          </h2>
+          <p className="text-sm text-gray-500 text-center mb-8">
+            Silahkan login untuk akses sistem
+          </p>
         </div>
         <form onSubmit={handleLogin} className="flex flex-col gap-5">
           {/* Input Email */}
