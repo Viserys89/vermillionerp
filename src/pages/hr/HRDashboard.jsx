@@ -1,39 +1,50 @@
 import React, { useState } from 'react';
-import { Search, Plus, Edit, Trash2, Upload, CheckCircle, X, Download, AlertCircle } from 'lucide-react';
+import { Search, Plus, Edit, Trash2, Upload, CheckCircle, X, Download, AlertCircle, ChevronLeft, ChevronRight } from 'lucide-react';
 
 const HRDashboard = () => {
   const [employees, setEmployees] = useState([
     { 
-      id: 1, 
-      name: 'Eka Kumar', 
-      email: 'eka@vermillion.com', 
-      phone: '08123456789',
-      dob: '1990-05-15',
-      address: 'Jl. Gatot Subroto No. 123, Jakarta',
-      role: 'Host', 
-      status: 'Aktif', 
-      contract: '12 Bulan',
-      bankAccount: '1234567890123456',
-      photo: null
+      id: 1, name: 'Eka Kumar', email: 'eka@vermillion.com', phone: '08123456789', dob: '1990-05-15',
+      address: 'Jl. Gatot Subroto No. 123, Jakarta', role: 'Host', status: 'Aktif', contract: '12 Bulan', bankAccount: '1234567890123456', photo: null
     },
     { 
-      id: 2, 
-      name: 'Siti Nurhaliza', 
-      email: 'siti@vermillion.com', 
-      phone: '08987654321',
-      dob: '1992-08-22',
-      address: 'Jl. Sudirman No. 456, Jakarta',
-      role: 'Manager', 
-      status: 'Aktif', 
-      contract: '24 Bulan',
-      bankAccount: '9876543210987654',
-      photo: null
+      id: 2, name: 'Siti Nurhaliza', email: 'siti@vermillion.com', phone: '08987654321', dob: '1992-08-22',
+      address: 'Jl. Sudirman No. 456, Jakarta', role: 'Manager', status: 'Aktif', contract: '24 Bulan', bankAccount: '9876543210987654', photo: null
+    },
+    { 
+      id: 3, name: 'Ghassan', email: 'ghassan@vermillion.com', phone: '08239582852', dob: '1999-07-22',
+      address: 'Jl. Gartu No. 456, Jakarta', role: 'Finance', status: 'Tidak Aktif', contract: '24 Bulan', bankAccount: '9876543210987654', photo: null
+    },
+    { 
+      id: 4, name: 'Vicky', email: 'vicky@vermillion.com', phone: '08239582852', dob: '1999-07-22',
+      address: 'Jl. Gartu No. 456, Jakarta', role: 'HR', status: 'Cuti', contract: '12 Bulan', bankAccount: '9876543210987654', photo: null
+    },
+    { 
+      id: 5, name: 'Nabil', email: 'nabil@vermillion.com', phone: '08239582852', dob: '1999-07-22',
+      address: 'Jl. Gartu No. 456, Jakarta', role: 'Performance', status: 'Resigned', contract: '12 Bulan', bankAccount: '9876543210987654', photo: null
+    },
+    { 
+      id: 6, name: 'Nabil', email: 'nabil@vermillion.com', phone: '08239582852', dob: '1999-07-22',
+      address: 'Jl. Gartu No. 456, Jakarta', role: 'Performance', status: 'Resigned', contract: '12 Bulan', bankAccount: '9876543210987654', photo: null
+    },
+    { 
+      id: 7, name: 'Nabil', email: 'nabil@vermillion.com', phone: '08239582852', dob: '1999-07-22',
+      address: 'Jl. Gartu No. 456, Jakarta', role: 'Performance', status: 'Resigned', contract: '12 Bulan', bankAccount: '9876543210987654', photo: null
+    },
+    { 
+      id: 8, name: 'Nabil', email: 'nabil@vermillion.com', phone: '08239582852', dob: '1999-07-22',
+      address: 'Jl. Gartu No. 456, Jakarta', role: 'Performance', status: 'Resigned', contract: '12 Bulan', bankAccount: '9876543210987654', photo: null
     },
   ]);
   
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('Semua');
   const [filterRole, setFilterRole] = useState('Semua');
+  
+  // State untuk Pagination
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isImportOpen, setIsImportOpen] = useState(false);
   const [isDetailOpen, setIsDetailOpen] = useState(false);
@@ -43,16 +54,7 @@ const HRDashboard = () => {
   const [employeeToDelete, setEmployeeToDelete] = useState(null);
   
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    dob: '',
-    address: '',
-    role: '',
-    status: 'Aktif',
-    contract: '12 Bulan',
-    bankAccount: '',
-    photo: null,
+    name: '', email: '', phone: '', dob: '', address: '', role: '', status: 'Aktif', contract: '12 Bulan', bankAccount: '', photo: null,
   });
 
   const roles = ['Host', 'Manager', 'Editor', 'Admin', 'Content Creator', 'Producer'];
@@ -64,6 +66,7 @@ const HRDashboard = () => {
     setTimeout(() => setNotification(null), 4000);
   };
 
+  // Filter Data
   const filteredEmployees = employees.filter(emp => {
     const matchesSearch = emp.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          emp.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -73,22 +76,19 @@ const HRDashboard = () => {
     return matchesSearch && matchesStatus && matchesRole;
   });
 
+  // Logika Pagination
+  const totalPages = Math.ceil(filteredEmployees.length / itemsPerPage);
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentEmployees = filteredEmployees.slice(indexOfFirstItem, indexOfLastItem);
+
   const handleOpenForm = (employee = null) => {
     if (employee) {
       setFormData(employee);
       setSelectedEmployee(employee);
     } else {
       setFormData({
-        name: '',
-        email: '',
-        phone: '',
-        dob: '',
-        address: '',
-        role: '',
-        status: 'Aktif',
-        contract: '12 Bulan',
-        bankAccount: '',
-        photo: null,
+        name: '', email: '', phone: '', dob: '', address: '', role: '', status: 'Aktif', contract: '12 Bulan', bankAccount: '', photo: null,
       });
       setSelectedEmployee(null);
     }
@@ -97,7 +97,6 @@ const HRDashboard = () => {
 
   const handleSave = (e) => {
     e.preventDefault();
-    
     if (!formData.name || !formData.email || !formData.role) {
       showNotification('error', 'Silakan isi semua field yang wajib!');
       return;
@@ -110,7 +109,6 @@ const HRDashboard = () => {
       setEmployees([...employees, { ...formData, id: Math.max(...employees.map(e => e.id), 0) + 1 }]);
       showNotification('success', `Karyawan ${formData.name} berhasil ditambahkan!`);
     }
-    
     setIsModalOpen(false);
   };
 
@@ -160,16 +158,7 @@ const HRDashboard = () => {
               const [id, name, email, phone, dob, address, role, status, contract, bankAccount] = line.split(',').map(s => s.trim());
               return {
                 id: Math.max(...employees.map(e => e.id), 0) + idx + 1,
-                name,
-                email,
-                phone,
-                dob,
-                address,
-                role,
-                status,
-                contract,
-                bankAccount,
-                photo: null,
+                name, email, phone, dob, address, role, status, contract, bankAccount, photo: null,
               };
             });
           setEmployees([...employees, ...newEmployees]);
@@ -198,7 +187,7 @@ const HRDashboard = () => {
 
       <h1 className="text-2xl md:text-3xl font-bold text-text-primary">Dashboard HR</h1>
 
-      {/* Stats Grid - Mobile First */}
+      {/* Stats Grid */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         <div className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow p-4 md:p-6">
           <p className="text-xs md:text-sm text-text-secondary truncate">Total Karyawan</p>
@@ -218,116 +207,110 @@ const HRDashboard = () => {
         </div>
       </div>
 
-      {/* Main Content Card - Mobile First */}
+      {/* Main Content Card */}
       <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 md:p-6 space-y-4">
         
-        {/* Action Buttons - Mobile Stack */}
+        {/* Action Buttons */}
         <div className="flex flex-col sm:flex-row gap-2">
-          <button
-            onClick={() => handleOpenForm()}
-            className="flex-1 flex items-center justify-center gap-2 px-3 md:px-4 py-2 md:py-2 bg-brand-orange text-white text-sm md:text-base rounded-lg hover:bg-orange-600 focus:ring-2 focus:ring-orange-300 focus:outline-none transition-all font-medium"
-          >
+          <button onClick={() => handleOpenForm()} className="flex-1 flex items-center justify-center gap-2 px-3 md:px-4 py-2 md:py-2 bg-brand-orange text-white text-sm md:text-base rounded-lg hover:bg-orange-600 focus:ring-2 focus:ring-orange-300 focus:outline-none transition-all font-medium">
             <Plus size={18} /> Tambah
           </button>
-          <button
-            onClick={() => setIsImportOpen(true)}
-            className="flex-1 flex items-center justify-center gap-2 px-3 md:px-4 py-2 md:py-2 bg-blue-600 text-white text-sm md:text-base rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-300 focus:outline-none transition-all font-medium"
-          >
+          <button onClick={() => setIsImportOpen(true)} className="flex-1 flex items-center justify-center gap-2 px-3 md:px-4 py-2 md:py-2 bg-blue-600 text-white text-sm md:text-base rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-300 focus:outline-none transition-all font-medium">
             <Upload size={18} /> Import
           </button>
-          <button
-            onClick={handleExport}
-            className="flex-1 flex items-center justify-center gap-2 px-3 md:px-4 py-2 md:py-2 bg-status-success text-white text-sm md:text-base rounded-lg hover:bg-emerald-700 focus:ring-2 focus:ring-green-300 focus:outline-none transition-all font-medium"
-          >
+          <button onClick={handleExport} className="flex-1 flex items-center justify-center gap-2 px-3 md:px-4 py-2 md:py-2 bg-status-success text-white text-sm md:text-base rounded-lg hover:bg-emerald-700 focus:ring-2 focus:ring-green-300 focus:outline-none transition-all font-medium">
             <Download size={18} /> Export
           </button>
         </div>
 
-        {/* Filters - Mobile Responsive */}
+        {/* Filters - Saat filter diubah, pagination kembali ke 1 */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
           <div className="relative col-span-1 sm:col-span-1">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" size={18} />
-            <input
-              type="text"
-              placeholder="Cari nama..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-brand-orange focus:border-transparent transition-all text-sm"
-            />
+            <input type="text" placeholder="Cari nama..." value={searchTerm} onChange={(e) => {setSearchTerm(e.target.value); setCurrentPage(1);}} className="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-brand-orange focus:border-transparent transition-all text-sm"/>
           </div>
-          <select
-            value={filterStatus}
-            onChange={(e) => setFilterStatus(e.target.value)}
-            className="px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-brand-orange focus:border-transparent transition-all text-sm"
-          >
+          <select value={filterStatus} onChange={(e) => {setFilterStatus(e.target.value); setCurrentPage(1);}} className="px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-brand-orange focus:border-transparent transition-all text-sm bg-white">
             <option value="Semua">Semua Status</option>
             {statuses.map(s => <option key={s} value={s}>{s}</option>)}
           </select>
-          <select
-            value={filterRole}
-            onChange={(e) => setFilterRole(e.target.value)}
-            className="px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-brand-orange focus:border-transparent transition-all text-sm"
-          >
+          <select value={filterRole} onChange={(e) => {setFilterRole(e.target.value); setCurrentPage(1);}} className="px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-brand-orange focus:border-transparent transition-all text-sm bg-white">
             <option value="Semua">Semua Role</option>
             {roles.map(r => <option key={r} value={r}>{r}</option>)}
           </select>
         </div>
 
-        {/* Table - Mobile Responsive */}
+        {/* Table */}
         {filteredEmployees.length > 0 ? (
-          <div className="overflow-x-auto -mx-4 md:mx-0">
-            <table className="w-full text-xs md:text-sm">
-              <thead>
-                <tr className="border-b border-gray-200">
-                  <th className="px-4 py-3 text-left font-bold text-text-primary">Nama</th>
-                  <th className="px-4 py-3 text-left font-bold text-text-primary hidden sm:table-cell">Telepon</th>
-                  <th className="px-4 py-3 text-left font-bold text-text-primary">Role</th>
-                  <th className="px-4 py-3 text-left font-bold text-text-primary hidden md:table-cell">Status</th>
-                  <th className="px-4 py-3 text-left font-bold text-text-primary">Aksi</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredEmployees.map(emp => (
-                  <tr key={emp.id} className="border-b border-gray-100 hover:bg-light-bg/50 transition-colors">
-                    <td className="px-4 py-3 font-medium">
-                      <div className="text-text-primary">{emp.name}</div>
-                      <div className="text-xs text-text-secondary sm:hidden">{emp.phone}</div>
-                    </td>
-                    <td className="px-4 py-3 text-text-secondary hidden sm:table-cell">{emp.phone}</td>
-                    <td className="px-4 py-3 text-sm font-medium text-text-primary">{emp.role}</td>
-                    <td className="px-4 py-3 hidden md:table-cell">
-                      <span className={`px-3 py-1 rounded-full text-xs font-bold whitespace-nowrap ${
-                        emp.status === 'Aktif' ? 'bg-green-100 text-status-success' :
-                        emp.status === 'Tidak Aktif' ? 'bg-red-100 text-status-error' :
-                        emp.status === 'Cuti' ? 'bg-yellow-100 text-status-warning' :
-                        'bg-gray-100 text-text-secondary'
-                      }`}>
-                        {emp.status}
-                      </span>
-                    </td>
-                    <td className="px-4 py-3">
-                      <div className="flex gap-1 md:gap-2">
-                        <button
-                          onClick={() => handleOpenForm(emp)}
-                          className="p-2 bg-blue-100 text-blue-600 rounded-lg hover:bg-blue-200 transition-all text-xs md:text-sm font-medium"
-                          title="Edit"
-                        >
-                          <Edit size={16} />
-                        </button>
-                        <button
-                          onClick={() => handleDeleteClick(emp.id)}
-                          className="p-2 bg-red-100 text-status-error rounded-lg hover:bg-red-200 transition-all text-xs md:text-sm font-medium"
-                          title="Hapus"
-                        >
-                          <Trash2 size={16} />
-                        </button>
-                      </div>
-                    </td>
+          <>
+            <div className="overflow-x-auto -mx-4 md:mx-0">
+              <table className="w-full text-xs md:text-sm">
+                <thead>
+                  <tr className="border-b border-gray-200">
+                    <th className="px-4 py-3 text-left font-bold text-text-primary">Nama</th>
+                    <th className="px-4 py-3 text-left font-bold text-text-primary hidden sm:table-cell">Telepon</th>
+                    <th className="px-4 py-3 text-left font-bold text-text-primary">Role</th>
+                    <th className="px-4 py-3 text-left font-bold text-text-primary hidden md:table-cell">Status</th>
+                    <th className="px-4 py-3 text-left font-bold text-text-primary">Aksi</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody>
+                  {currentEmployees.map(emp => (
+                    <tr key={emp.id} className="border-b border-gray-100 hover:bg-light-bg/50 transition-colors">
+                      <td className="px-4 py-3 font-medium">
+                        <div className="text-text-primary">{emp.name}</div>
+                        <div className="text-xs text-text-secondary sm:hidden">{emp.phone}</div>
+                      </td>
+                      <td className="px-4 py-3 text-text-secondary hidden sm:table-cell">{emp.phone}</td>
+                      <td className="px-4 py-3 text-sm font-medium text-text-primary">{emp.role}</td>
+                      <td className="px-4 py-3 hidden md:table-cell">
+                        <span className={`px-3 py-1 rounded-full text-xs font-bold whitespace-nowrap ${
+                          emp.status === 'Aktif' ? 'bg-green-100 text-status-success' :
+                          emp.status === 'Tidak Aktif' ? 'bg-red-100 text-status-error' :
+                          emp.status === 'Cuti' ? 'bg-yellow-100 text-status-warning' :
+                          'bg-gray-100 text-text-secondary'
+                        }`}>
+                          {emp.status}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3">
+                        <div className="flex gap-1 md:gap-2">
+                          {/* FIX BUTTON: Warna lebih soft, outline ditiadakan biar bersih, jelas nggak disembunyiin */}
+                          <button onClick={() => handleOpenForm(emp)} className="p-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-all text-xs md:text-sm font-medium" title="Edit">
+                            <Edit size={16} />
+                          </button>
+                          <button onClick={() => handleDeleteClick(emp.id)} className="p-2 bg-red-50 text-status-error rounded-lg hover:bg-red-100 transition-all text-xs md:text-sm font-medium" title="Hapus">
+                            <Trash2 size={16} />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Pagination UI */}
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-4 pt-4 border-t border-gray-100">
+              <span className="text-xs md:text-sm text-text-secondary text-center sm:text-left">
+                Menampilkan <span className="font-semibold text-text-primary">{indexOfFirstItem + 1}</span> - <span className="font-semibold text-text-primary">{Math.min(indexOfLastItem, filteredEmployees.length)}</span> dari <span className="font-semibold text-text-primary">{filteredEmployees.length}</span> data
+              </span>
+              <div className="flex items-center gap-2">
+                <button onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))} disabled={currentPage === 1} className="p-2 border border-gray-300 rounded-lg text-gray-600 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all">
+                  <ChevronLeft size={16} />
+                </button>
+                <div className="hidden sm:flex items-center gap-1">
+                  {[...Array(totalPages)].map((_, i) => (
+                    <button key={i} onClick={() => setCurrentPage(i + 1)} className={`w-8 h-8 rounded-lg text-xs font-medium transition-all ${currentPage === i + 1 ? 'bg-brand-orange text-white' : 'hover:bg-orange-50 text-gray-600'}`}>
+                      {i + 1}
+                    </button>
+                  ))}
+                </div>
+                <button onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))} disabled={currentPage === totalPages} className="p-2 border border-gray-300 rounded-lg text-gray-600 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all">
+                  <ChevronRight size={16} />
+                </button>
+              </div>
+            </div>
+          </>
         ) : (
           <div className="text-center py-8">
             <p className="text-gray-500 text-sm md:text-base">Tidak ada data karyawan</p>
@@ -349,68 +332,32 @@ const HRDashboard = () => {
             <form onSubmit={handleSave} className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
               <div className="flex flex-col gap-2">
                 <label className="text-sm font-bold text-text-primary">Nama Lengkap *</label>
-                <input
-                  type="text"
-                  required
-                  value={formData.name}
-                  onChange={(e) => setFormData({...formData, name: e.target.value})}
-                  className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-brand-orange focus:border-transparent transition-all text-sm"
-                  placeholder="Masukkan nama"
-                />
+                <input type="text" required value={formData.name} onChange={(e) => setFormData({...formData, name: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-brand-orange focus:border-transparent transition-all text-sm" placeholder="Masukkan nama"/>
               </div>
 
               <div className="flex flex-col gap-2">
                 <label className="text-sm font-bold text-text-primary">Email *</label>
-                <input
-                  type="email"
-                  required
-                  value={formData.email}
-                  onChange={(e) => setFormData({...formData, email: e.target.value})}
-                  className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-brand-orange focus:border-transparent transition-all text-sm"
-                  placeholder="email@example.com"
-                />
+                <input type="email" required value={formData.email} onChange={(e) => setFormData({...formData, email: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-brand-orange focus:border-transparent transition-all text-sm" placeholder="email@example.com"/>
               </div>
 
               <div className="flex flex-col gap-2">
                 <label className="text-sm font-bold text-text-primary">Telepon</label>
-                <input
-                  type="tel"
-                  value={formData.phone}
-                  onChange={(e) => setFormData({...formData, phone: e.target.value})}
-                  className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-brand-orange focus:border-transparent transition-all text-sm"
-                  placeholder="08xxxxxxxxxx"
-                />
+                <input type="tel" value={formData.phone} onChange={(e) => setFormData({...formData, phone: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-brand-orange focus:border-transparent transition-all text-sm" placeholder="08xxxxxxxxxx"/>
               </div>
 
               <div className="flex flex-col gap-2">
                 <label className="text-sm font-bold text-text-primary">Tanggal Lahir</label>
-                <input
-                  type="date"
-                  value={formData.dob}
-                  onChange={(e) => setFormData({...formData, dob: e.target.value})}
-                  className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-brand-orange focus:border-transparent transition-all text-sm"
-                />
+                <input type="date" value={formData.dob} onChange={(e) => setFormData({...formData, dob: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-brand-orange focus:border-transparent transition-all text-sm"/>
               </div>
 
               <div className="flex flex-col gap-2 md:col-span-2">
                 <label className="text-sm font-bold text-text-primary">Alamat</label>
-                <input
-                  type="text"
-                  value={formData.address}
-                  onChange={(e) => setFormData({...formData, address: e.target.value})}
-                  className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-brand-orange focus:border-transparent transition-all text-sm"
-                  placeholder="Jalan, Kota, Provinsi"
-                />
+                <input type="text" value={formData.address} onChange={(e) => setFormData({...formData, address: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-brand-orange focus:border-transparent transition-all text-sm" placeholder="Jalan, Kota, Provinsi"/>
               </div>
 
               <div className="flex flex-col gap-2">
                 <label className="text-sm font-bold text-text-primary">Role *</label>
-                <select
-                  required
-                  value={formData.role}
-                  onChange={(e) => setFormData({...formData, role: e.target.value})}
-                  className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-brand-orange focus:border-transparent transition-all text-sm"
-                >
+                <select required value={formData.role} onChange={(e) => setFormData({...formData, role: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-brand-orange focus:border-transparent transition-all text-sm">
                   <option value="">Pilih Role</option>
                   {roles.map(r => <option key={r} value={r}>{r}</option>)}
                 </select>
@@ -418,49 +365,29 @@ const HRDashboard = () => {
 
               <div className="flex flex-col gap-2">
                 <label className="text-sm font-bold text-text-primary">Status</label>
-                <select
-                  value={formData.status}
-                  onChange={(e) => setFormData({...formData, status: e.target.value})}
-                  className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-brand-orange focus:border-transparent transition-all text-sm"
-                >
+                <select value={formData.status} onChange={(e) => setFormData({...formData, status: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-brand-orange focus:border-transparent transition-all text-sm">
                   {statuses.map(s => <option key={s} value={s}>{s}</option>)}
                 </select>
               </div>
 
               <div className="flex flex-col gap-2">
                 <label className="text-sm font-bold text-text-primary">Durasi Kontrak</label>
-                <select
-                  value={formData.contract}
-                  onChange={(e) => setFormData({...formData, contract: e.target.value})}
-                  className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-brand-orange focus:border-transparent transition-all text-sm"
-                >
+                <select value={formData.contract} onChange={(e) => setFormData({...formData, contract: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-brand-orange focus:border-transparent transition-all text-sm">
                   {contracts.map(c => <option key={c} value={c}>{c}</option>)}
                 </select>
               </div>
 
               <div className="flex flex-col gap-2 md:col-span-2">
                 <label className="text-sm font-bold text-text-primary">No. Rekening Bank</label>
-                <input
-                  type="text"
-                  value={formData.bankAccount}
-                  onChange={(e) => setFormData({...formData, bankAccount: e.target.value})}
-                  className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-brand-orange focus:border-transparent transition-all text-sm"
-                  placeholder="Nomor rekening bank karyawan"
-                />
+                <input type="text" value={formData.bankAccount} onChange={(e) => setFormData({...formData, bankAccount: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-brand-orange focus:border-transparent transition-all text-sm" placeholder="Nomor rekening bank karyawan"/>
               </div>
 
               <div className="md:col-span-2 flex flex-col sm:flex-row gap-2 mt-4">
-                <button
-                  type="submit"
-                  className="flex-1 bg-brand-orange text-white py-3 rounded-lg font-bold hover:bg-orange-600 focus:ring-2 focus:ring-orange-300 focus:outline-none transition-all text-sm md:text-base"
-                >
+                <button type="submit" className="flex-1 bg-brand-orange text-white py-3 rounded-lg font-bold hover:bg-orange-600 focus:ring-2 focus:ring-orange-300 focus:outline-none transition-all text-sm md:text-base">
                   Simpan
                 </button>
-                <button
-                  type="button"
-                  onClick={() => setIsModalOpen(false)}
-                  className="flex-1 bg-gray-400 text-white py-3 rounded-lg font-bold hover:bg-gray-500 border border-gray-500 focus:ring-2 focus:ring-gray-300 focus:outline-none transition-all text-sm md:text-base"
-                >
+                {/* FIX BUTTON BATAL: Warna abu-abu cerah tanpa border ketuaan */}
+                <button type="button" onClick={() => setIsModalOpen(false)} className="flex-1 bg-gray-100 text-gray-700 py-3 rounded-lg font-bold hover:bg-gray-200 transition-all text-sm md:text-base">
                   Batal
                 </button>
               </div>
@@ -485,19 +412,11 @@ const HRDashboard = () => {
             </p>
 
             <div className="flex flex-col sm:flex-row gap-2">
-              <button
-                onClick={handleConfirmDelete}
-                className="flex-1 bg-status-error text-white py-3 rounded-lg font-bold hover:bg-red-600 focus:ring-2 focus:ring-red-300 focus:outline-none transition-all text-sm md:text-base"
-              >
+              <button onClick={handleConfirmDelete} className="flex-1 bg-status-error text-white py-3 rounded-lg font-bold hover:bg-red-600 focus:ring-2 focus:ring-red-300 focus:outline-none transition-all text-sm md:text-base">
                 Hapus
               </button>
-              <button
-                onClick={() => {
-                  setIsDeleteConfirmOpen(false);
-                  setEmployeeToDelete(null);
-                }}
-                className="flex-1 bg-gray-400 text-white py-3 rounded-lg font-bold hover:bg-gray-500 border border-gray-500 focus:ring-2 focus:ring-gray-300 focus:outline-none transition-all text-sm md:text-base"
-              >
+              {/* FIX BUTTON BATAL: Konsisten dengan form tambah */}
+              <button onClick={() => { setIsDeleteConfirmOpen(false); setEmployeeToDelete(null); }} className="flex-1 bg-gray-100 text-gray-700 py-3 rounded-lg font-bold hover:bg-gray-200 transition-all text-sm md:text-base">
                 Batal
               </button>
             </div>
@@ -521,16 +440,9 @@ const HRDashboard = () => {
               <code className="block bg-light-bg p-3 rounded text-xs overflow-x-auto font-mono text-text-primary">
                 ID,Nama,Email,Telepon,Tgl Lahir,Alamat,Role,Status,Kontrak,No Rekening
               </code>
-              <input
-                type="file"
-                accept=".csv"
-                onChange={handleImportFile}
-                className="w-full text-sm file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-brand-orange file:text-white hover:file:bg-orange-600 cursor-pointer"
-              />
-              <button
-                onClick={() => setIsImportOpen(false)}
-                className="w-full bg-gray-400 text-white py-2 rounded-lg font-bold hover:bg-gray-500 border border-gray-500 focus:ring-2 focus:ring-gray-300 focus:outline-none transition-all text-sm md:text-base"
-              >
+              <input type="file" accept=".csv" onChange={handleImportFile} className="w-full text-sm file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-brand-orange file:text-white hover:file:bg-orange-600 cursor-pointer" />
+              {/* FIX BUTTON TUTUP: Konsisten abu-abu cerah */}
+              <button onClick={() => setIsImportOpen(false)} className="w-full bg-gray-100 text-gray-700 py-3 rounded-lg font-bold hover:bg-gray-200 transition-all text-sm md:text-base">
                 Tutup
               </button>
             </div>
