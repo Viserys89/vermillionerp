@@ -7,13 +7,21 @@ export default {
   theme: {
     extend: {
       colors: {
-        // Kita pakai warna dari CSS kamu sebelumnya (#F29542) 
-        // supaya sama persis dengan desain awal
+        // Vermillion (warna brand original)
         vermillion: {
           light: '#F5A860',
           DEFAULT: '#F29542', 
           dark: '#E6803A',
         },
+        // Semantic colors (Phase 1 - Foundation)
+        'brand-orange': '#FF8000',
+        'light-bg': '#F3F4F6',
+        'status-success': '#10B981',
+        'status-warning': '#F59E0B',
+        'status-error': '#EF4444',
+        'text-primary': '#1F2937',
+        'text-secondary': '#6B7280',
+        'text-light': '#9CA3AF',
       },
       keyframes: {
         slideUp: {

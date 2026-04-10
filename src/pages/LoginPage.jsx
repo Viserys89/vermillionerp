@@ -14,6 +14,8 @@ const LoginPage = () => {
       navigate("/dashboard-host");
     } else if (email === "finance" && password === "123") {
       navigate("/dashboard-finance");
+    } else if (email === "hr" && password === "123") {
+      navigate("/dashboard-hr");
     } else {
       alert("Email atau Password salah! (Gunakan password: 123)");
     }

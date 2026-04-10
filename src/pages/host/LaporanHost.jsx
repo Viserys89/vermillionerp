@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { CheckCircle, X, Diamond, Upload } from 'lucide-react';
+import { CheckCircle, X, Gem, Upload } from 'lucide-react';
 
 const LaporanHost = () => {
   const [isModalOpen, setModalOpen] = useState(false);
@@ -83,7 +83,7 @@ const LaporanHost = () => {
               <div className="flex flex-col gap-2">
                 <label className="text-sm font-bold">Perolehan Diamond</label>
                 <div className="relative">
-                  <Diamond className="absolute left-4 top-1/2 -translate-y-1/2 text-orange-500" size={18} />
+                  <Gem className="absolute left-4 top-1/2 -translate-y-1/2 text-orange-500" size={18} />
                   <input type="number" required placeholder="Contoh: 12000" className="w-full p-3 pl-12 rounded-xl border border-gray-200 bg-white/50 outline-none focus:border-orange-500" />
                 </div>
               </div>
