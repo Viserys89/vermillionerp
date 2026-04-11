@@ -9,6 +9,10 @@ import HRDashboard from './pages/hr/HRDashboard';
 import HRKaryawan from './pages/hr/HRKaryawan';
 import HRIzin from './pages/hr/HRIzin';
 import HRLaporan from './pages/hr/HRLaporan';
+import TechLayout from './components/layout/TechLayout';
+import TechDashboard from './pages/technician/TechDasboard';
+import TechKendala from './pages/technician/TechKendala';
+import TechModul from './pages/technician/TechModul';
 
 function App() {
   return (
@@ -27,6 +31,11 @@ function App() {
           <Route path="karyawan" element={<HRKaryawan />} /> 
           <Route path="izin" element={<HRIzin />} /> 
           <Route path="laporan" element={<HRLaporan />} /> 
+        </Route>
+        <Route path="/dashboard-tech" element={<TechLayout />}>
+          <Route index element={<TechDashboard />} />
+          <Route path="kendala" element={<TechKendala />} />
+          <Route path="modul" element={<TechModul />} />
         </Route>
       </Routes>
     </Router>
