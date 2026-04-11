@@ -12,6 +12,7 @@ import {
   ShoppingCart,
   Package,
   Wallet,
+  User
 } from "lucide-react";
 
 const MainLayout = () => {
@@ -38,6 +39,11 @@ const MainLayout = () => {
       icon: <Package size={20} />,
       path: "/dashboard-procurement/inventory",
     },
+        {
+      name: "Contact",
+      icon: <Contact size={20} />,
+      path: "/dashboard-procurement/contact",
+    },
   ];
   const hostMenu = [
     {
@@ -63,7 +69,7 @@ const MainLayout = () => {
     {
       name: "Contact",
       icon: <Contact size={20} />,
-      path: "",
+      path: "/dashboard-host/contact",
     },
     {
       name: "Pengaturan",
@@ -73,30 +79,42 @@ const MainLayout = () => {
   ];
 
   const FinanceMenu = [
-      {
+    {
       name: "Beranda",
       icon: <LayoutDashboard size={20} />,
       path: "/dashboard-finance",
-      },
+    },
 
-      {
+    {
       name: "Penghasilan",
       icon: <Wallet size={20} />,
       path: "penghasilan",
-      },
-    ];
+    },
+    {
+      name: "Profil",
+      icon: <User size={20} />,
+      path: "/dashboard-finance/profile",
+    },
+        {
+      name: "Contact",
+      icon: <Contact size={20} />,
+      path: "/dashboard-finance/contact",
+    },
+  ];
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#ff8000] via-white to-white p-4 md:p-6 flex flex-col gap-4 md:gap-6 font-inter overflow-hidden relative">
       <Topbar
-        roleName={isProcurement ? "Procurement" : "Host"}
+        roleName={isProcurement ? "Procurement" : isFinance ? "Finance" : "Host"}
         toggleSidebar={() => setSidebarOpen(!isSidebarOpen)}
       />
 
       <div className="flex flex-1 gap-6 overflow-hidden items-start relative">
         {/* Kirim menu yang sesuai ke Sidebar */}
         <Sidebar
-          menuItems={isProcurement ? procurementMenu : isFinance ? FinanceMenu : hostMenu}
+          menuItems={
+            isProcurement ? procurementMenu : isFinance ? FinanceMenu : hostMenu
+          }
           isOpen={isSidebarOpen}
           closeSidebar={() => setSidebarOpen(false)}
         />

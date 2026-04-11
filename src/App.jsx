@@ -7,6 +7,8 @@ import LaporanHost from "./pages/host/LaporanHost";
 import BerandaProcurement from "./pages/procurement/BerandaProcurement"; 
 import BerandaFinance from "./pages/finance/BerandaFinance";
 import PenghasilanFinance from "./pages/finance/PenghasilanFinance";
+import ProfilePage from "./pages/ProfilePage";
+import ContactRole from "./pages/ContactRole";
 
 function App() {
   return (
@@ -19,15 +21,21 @@ function App() {
         <Route path="/dashboard-host" element={<MainLayout />}>
           <Route index element={<BerandaHost />} />
           <Route path="laporan" element={<LaporanHost />} />
+          <Route path="profile" element={<ProfilePage />} />
+          <Route path="contact" element={<ContactRole />} />
         </Route>
         {/* Dashboard Role: PROCUREMENT */}
         <Route path="/dashboard-procurement" element={<MainLayout />}>
           <Route index element={<BerandaProcurement />} />
+          <Route path="profile" element={<ProfilePage />} />
+          <Route path="contact" element={<ContactRole />} />
         </Route>
          {/* Dashboard Role: Finance */}
         <Route path="/dashboard-finance" element={<MainLayout />}>
           <Route index element={<BerandaFinance />} />
           <Route path="penghasilan" element={<PenghasilanFinance />} />
+          <Route path="profile" element={<ProfilePage />} />
+          <Route path="contact" element={<ContactRole />} />
         </Route>
       </Routes>
     </Router>

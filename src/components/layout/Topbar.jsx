@@ -1,10 +1,13 @@
-import React, { useState } from "react";
+import { useState, } from "react";
+import { Link, useLocation } from "react-router-dom";
 import { Menu, User, ChevronDown, LogOut, Settings } from "lucide-react";
 import logo from "../../assets/logovermiloren.png";
 
 const Topbar = ({ toggleSidebar, roleName }) => {
   const [isDropdownOpen, setDropdownOpen] = useState(false);
-
+  // Ambil path sekarang untuk menentukan prefix dashboard-nya
+const location = useLocation();
+const dashboardPrefix = location.pathname.split('/')[1]; // akan mengambil 'dashboard-host' dsb.
   return (
     <header className="bg-white/40 backdrop-blur-xl border border-white/60 rounded-[20px] px-8 py-4 flex justify-between items-center shadow-lg relative z-[999]">
       <div className="flex items-center gap-4">
@@ -42,9 +45,11 @@ const Topbar = ({ toggleSidebar, roleName }) => {
 
         {isDropdownOpen && (
           <div className="absolute top-[125%] right-0 w-44 bg-white/90 backdrop-blur-md border border-white/60 rounded-2xl shadow-xl py-2 animate-slide-up z-[1001]">
-            <button className="w-full px-5 py-3 text-left text-sm flex items-center gap-2 hover:text-orange-500 hover:bg-orange-50/50 transition-colors">
-              <User size={16} /> Profil
-            </button>
+<Link to={`/${dashboardPrefix}/profile`}>
+  <button className="w-full px-5 py-3 text-left text-sm flex items-center gap-2 hover:text-orange-500 hover:bg-orange-50/50 transition-colors">
+    <User size={16} /> Profil
+  </button>
+</Link>
             <button className="w-full px-5 py-3 text-left text-sm flex items-center gap-2 hover:text-orange-500 hover:bg-orange-50/50 transition-colors">
               <Settings size={16} /> Settings
             </button>

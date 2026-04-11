@@ -85,6 +85,68 @@ const PenghasilanFinance = () => {
             </div>
     
         </div>
+        <div className="grid grid-cols-4 items-center px-6 py-4 border-t bg-white">
+    
+            {/* Host */}
+            <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center">
+                <i className="bx bx-user text-xl text-gray-600"></i>
+            </div>
+            <div>
+                <p className="font-medium">Mukhammad Vicky</p>
+                <p className="text-sm text-gray-400">Ventura</p>
+            </div>
+            </div>
+    
+            
+    
+            {/* Diamond */}
+            <div className="text-orange-500 font-semibold">
+            100.000
+            </div>
+    
+            {/* Status */}
+            <div className="text-gray-600 font-semibold">
+            Rp.12.000.000
+            </div>
+    
+            {/* Verifikasi */}
+            <div className="text-orange-500 font-semibold">
+            Rp.12.000.000
+            </div>
+    
+        </div>
+        <div className="grid grid-cols-4 items-center px-6 py-4 border-t bg-white">
+    
+            {/* Host */}
+            <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center">
+                <i className="bx bx-user text-xl text-gray-600"></i>
+            </div>
+            <div>
+                <p className="font-medium">Nabil</p>
+                <p className="text-sm text-gray-400">Alvorn</p>
+            </div>
+            </div>
+    
+            
+    
+            {/* Diamond */}
+            <div className="text-orange-500 font-semibold">
+            100.000
+            </div>
+    
+            {/* Status */}
+            <div className="text-gray-600 font-semibold">
+            Rp.12.000.000
+            </div>
+    
+            {/* Verifikasi */}
+            <div className="text-orange-500 font-semibold">
+            Rp.12.000.000
+            </div>
+    
+        </div>
         </div>
         </div>
   );
