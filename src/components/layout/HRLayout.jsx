@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Outlet } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 import Sidebar from "./Sidebar";
 import Topbar from "./Topbar";
 import {
@@ -8,6 +8,13 @@ import {
   CheckCircle,
   FileText,
   Settings,
+  Megaphone,
+  PenTool,
+  Contact,
+  ShoppingCart,
+  Package,
+  Wallet,
+  User
 } from "lucide-react";
 
 const HRLayout = () => {
@@ -34,10 +41,16 @@ const HRLayout = () => {
       path: "/dashboard-hr/laporan",
     },
     {
+      name: "Contact",
+      icon: <Contact size={20} />,
+      path: "/dashboard-hr/contact",
+    },
+    {
       name: "Pengaturan",
       icon: <Settings size={20} />,
       path: "/dashboard-hr/settings",
     },
+
   ];
 
   return (

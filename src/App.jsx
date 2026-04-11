@@ -53,11 +53,15 @@ function App() {
           <Route path="karyawan" element={<HRKaryawan />} /> 
           <Route path="izin" element={<HRIzin />} /> 
           <Route path="laporan" element={<HRLaporan />} /> 
+          <Route path="contact" element={<ContactRole />} />
+          <Route path="profile" element={<ProfilePage />} />
         </Route>
         <Route path="/dashboard-tech" element={<TechLayout />}>
           <Route index element={<TechDashboard />} />
           <Route path="kendala" element={<TechKendala />} />
           <Route path="modul" element={<TechModul />} />
+          <Route path="contact" element={<ContactRole />} />
+          <Route path="profile" element={<ProfilePage />} />
         </Route>
       </Routes>
     </Router>
