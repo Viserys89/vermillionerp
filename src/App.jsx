@@ -17,6 +17,7 @@ import TechLayout from './components/layout/TechLayout';
 import TechDashboard from './pages/technician/TechDasboard';
 import TechKendala from './pages/technician/TechKendala';
 import TechModul from './pages/technician/TechModul';
+import HRLayout from './components/layout/HRLayout';
 
 
 function App() {
