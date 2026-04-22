@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Search, Plus, Upload, Edit, Trash2, Eye, X, CheckCircle, FileText, FileImage } from 'lucide-react';
+import ConfirmationModal from '../../components/common/ConfirmationModal';
 
 const TechModul = () => {
   const [view, setView] = useState('list'); // 'list' atau 'editor'
@@ -14,6 +15,12 @@ const TechModul = () => {
   const [editorTitle, setEditorTitle] = useState('');
   const [editorContent, setEditorContent] = useState('');
   const [isSimulatingUpload, setIsSimulatingUpload] = useState(false);
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [currentEditId, setCurrentEditId] = useState(null);
+
+  // Modal State
+  const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [selectedMod, setSelectedMod] = useState(null);
 
   const showNotification = (message) => {
     setNotification({ type: 'success', message });
@@ -23,29 +30,47 @@ const TechModul = () => {
   const handleOpenEditor = (mod = null) => {
     if (mod) {
       setEditorTitle(mod.title);
-      // Dummy content untuk mode edit
+      setIsEditMode(true);
+      setCurrentEditId(mod.id);
       setEditorContent(`## ${mod.title}\n\nIni adalah panduan langkah demi langkah.\n\n1. Restart aplikasi.\n2. Cek koneksi internet.\n3. Login ulang.\n\n![Ilustrasi Gambar](https://via.placeholder.com/400x200?text=Gambar+Preview)`);
     } else {
       setEditorTitle('');
       setEditorContent('');
+      setIsEditMode(false);
+      setCurrentEditId(null);
     }
     setView('editor');
   };
 
   const handleSave = () => {
     if (!editorTitle) return alert('Judul wajib diisi!');
-    const newMod = { id: Date.now(), title: editorTitle, date: new Date().toISOString().split('T')[0], status: 'Published' };
-    setModules([newMod, ...modules]);
+    
+    if (isEditMode) {
+      setModules(modules.map(m => m.id === currentEditId ? { ...m, title: editorTitle, date: new Date().toISOString().split('T')[0] } : m));
+      showNotification('Modul berhasil diperbarui!');
+    } else {
+      const newMod = { id: Date.now(), title: editorTitle, date: new Date().toISOString().split('T')[0], status: 'Published' };
+      setModules([newMod, ...modules]);
+      showNotification('Modul berhasil disimpan dan dipublikasikan!');
+    }
     setView('list');
-    showNotification('Modul berhasil disimpan dan dipublikasikan!');
   };
 
-  // Simulasi Import File (Auto Convert jadi Preview Text)
+  const handleDeleteClick = (mod) => {
+    setSelectedMod(mod);
+    setDeleteModalOpen(true);
+  };
+
+  const confirmDelete = () => {
+    setModules(modules.filter(m => m.id !== selectedMod.id));
+    showNotification(`Modul "${selectedMod.title}" berhasil dihapus.`);
+  };
+
+  // Simulasi Import File
   const handleImportFile = (e) => {
     const file = e.target.files[0];
     if (file) {
       setIsSimulatingUpload(true);
-      // Simulasi loading extract text dari PDF/Word
       setTimeout(() => {
         setEditorTitle(file.name.split('.')[0].replace(/[-_]/g, ' '));
         setEditorContent(`## Hasil Import: ${file.name}\n\nSistem berhasil mengekstrak teks dari file dokumen yang Anda unggah.\n\n**Poin Penting:**\n- Pastikan perangkat terhubung internet.\n- Buka menu Settings > Network.\n\n*(Sistem Auto-Convert Vermillion ERP)*\n\n![Gambar Otomatis Terdeteksi](https://via.placeholder.com/400x200?text=Gambar+Dari+Dokumen)`);
@@ -58,39 +83,38 @@ const TechModul = () => {
   return (
     <div className="animate-fade-in space-y-4 md:space-y-6 h-[calc(100vh-80px)] flex flex-col">
       {notification && (
-        <div className="fixed top-4 right-4 z-[10000] p-4 rounded-xl bg-status-success/90 border-status-success text-white shadow-lg flex items-center gap-3 animate-slide-up">
+        <div className="fixed top-4 right-4 z-[10000] p-4 rounded-xl bg-green-500 border border-green-600 text-white shadow-lg flex items-center gap-3 animate-slide-up">
           <CheckCircle size={20} /> <span className="font-medium">{notification.message}</span>
         </div>
       )}
 
       {view === 'list' ? (
-        // === VIEW: LIST MODUL ===
         <>
-          <div className="flex justify-between items-center">
-            <h1 className="text-2xl md:text-3xl font-bold text-text-primary">Pusat Pengetahuan (Modul)</h1>
-            <button onClick={() => handleOpenEditor()} className="flex items-center gap-2 px-4 py-2 bg-brand-orange text-white rounded-lg hover:bg-orange-600 transition-all font-bold shadow-sm shadow-orange-200">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <h1 className="text-2xl md:text-3xl font-bold text-gray-800">Pusat Pengetahuan (Modul)</h1>
+            <button onClick={() => handleOpenEditor()} className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 bg-orange-500 text-white rounded-xl hover:bg-orange-600 transition-all font-bold shadow-lg shadow-orange-200">
               <Plus size={18} /> Buat Modul Baru
             </button>
           </div>
 
-          <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 md:p-6 flex-1">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="bg-white rounded-[24px] border border-orange-100 shadow-sm p-4 md:p-6 flex-1 overflow-y-auto">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {modules.map(mod => (
-                <div key={mod.id} className="p-5 border border-gray-200 rounded-xl hover:shadow-md hover:border-brand-orange/30 transition-all flex flex-col justify-between group">
+                <div key={mod.id} className="p-6 border border-gray-100 rounded-2xl hover:shadow-xl hover:border-orange-200 transition-all flex flex-col justify-between group bg-gray-50/30">
                   <div>
-                    <div className="flex justify-between items-start mb-3">
-                      <div className="p-2 bg-blue-50 text-blue-600 rounded-lg"><FileText size={20} /></div>
-                      <span className="px-2 py-1 bg-green-50 text-green-700 text-[10px] font-bold rounded uppercase tracking-wide">{mod.status}</span>
+                    <div className="flex justify-between items-start mb-4">
+                      <div className="p-3 bg-blue-50 text-blue-600 rounded-2xl"><FileText size={24} /></div>
+                      <span className="px-3 py-1 bg-green-100 text-green-700 text-[10px] font-black rounded-lg uppercase tracking-widest">{mod.status}</span>
                     </div>
-                    <h3 className="font-bold text-text-primary text-lg mb-1 leading-tight line-clamp-2">{mod.title}</h3>
-                    <p className="text-xs text-text-secondary">Diperbarui: {mod.date}</p>
+                    <h3 className="font-bold text-gray-800 text-lg mb-2 leading-tight line-clamp-2">{mod.title}</h3>
+                    <p className="text-xs text-gray-400 font-medium">Diperbarui: {mod.date}</p>
                   </div>
-                  <div className="mt-6 flex gap-2">
-                    <button onClick={() => handleOpenEditor(mod)} className="flex-1 flex justify-center items-center gap-1.5 py-2 bg-orange-50 text-brand-orange rounded-lg hover:bg-brand-orange hover:text-white transition-all text-xs font-bold border border-orange-100">
-                      <Edit size={14} /> Edit
+                  <div className="mt-8 flex gap-2">
+                    <button onClick={() => handleOpenEditor(mod)} className="flex-1 flex justify-center items-center gap-2 py-3 bg-white border border-gray-200 text-gray-700 rounded-xl hover:bg-gray-50 transition-all text-xs font-bold">
+                      <Edit size={16} /> Edit
                     </button>
-                    <button className="px-3 py-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-500 hover:text-white transition-all border border-red-100">
-                      <Trash2 size={14} />
+                    <button onClick={() => handleDeleteClick(mod)} className="px-4 py-3 bg-red-50 text-red-600 rounded-xl hover:bg-red-500 hover:text-white transition-all border border-red-100">
+                      <Trash2 size={18} />
                     </button>
                   </div>
                 </div>
@@ -99,87 +123,86 @@ const TechModul = () => {
           </div>
         </>
       ) : (
-        // === VIEW: SPLIT PANE EDITOR & PREVIEW ===
         <div className="flex flex-col h-full space-y-4">
-          <div className="flex justify-between items-center bg-white p-4 rounded-xl border border-gray-200 shadow-sm shrink-0">
-            <h1 className="text-xl font-bold text-text-primary">Bikn/Edit Modul</h1>
-            <div className="flex gap-2">
-              <button onClick={() => setView('list')} className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg font-bold text-sm hover:bg-gray-200 transition-all">Batal</button>
-              <button onClick={handleSave} className="px-4 py-2 bg-status-success text-white rounded-lg font-bold text-sm hover:bg-green-600 transition-all shadow-sm shadow-green-200">Publikasikan Modul</button>
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-white p-4 rounded-2xl border border-orange-100 shadow-sm gap-4">
+            <h1 className="text-xl font-bold text-gray-800">{isEditMode ? 'Edit Modul' : 'Buat Modul Baru'}</h1>
+            <div className="flex gap-2 w-full sm:w-auto">
+              <button onClick={() => setView('list')} className="flex-1 sm:flex-none px-6 py-2.5 bg-gray-100 text-gray-600 rounded-xl font-bold text-sm hover:bg-gray-200 transition-all">Batal</button>
+              <button onClick={handleSave} className="flex-1 sm:flex-none px-6 py-2.5 bg-orange-500 text-white rounded-xl font-bold text-sm hover:bg-orange-600 transition-all shadow-lg shadow-orange-100">Simpan Modul</button>
             </div>
           </div>
 
-          {/* Editor Area - Split Screen on Desktop */}
-          <div className="flex flex-col lg:flex-row gap-4 flex-1 min-h-[500px]">
-            
-            {/* Kiri: Area Edit / Import */}
-            <div className="flex-1 bg-white rounded-xl border border-gray-200 shadow-sm p-4 md:p-6 flex flex-col h-full">
-              <div className="mb-4">
-                <label className="block text-sm font-bold text-text-primary mb-2">Judul Modul</label>
-                <input type="text" value={editorTitle} onChange={(e) => setEditorTitle(e.target.value)} placeholder="Contoh: Cara Mengatasi Error Studio..." className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-brand-orange outline-none font-bold text-lg"/>
+          <div className="flex flex-col lg:flex-row gap-6 flex-1 min-h-0 overflow-hidden">
+            <div className="flex-1 bg-white rounded-[24px] border border-orange-100 shadow-sm p-4 md:p-6 flex flex-col h-full overflow-y-auto">
+              <div className="mb-6">
+                <label className="block text-sm font-bold text-gray-700 mb-2">Judul Modul</label>
+                <input type="text" value={editorTitle} onChange={(e) => setEditorTitle(e.target.value)} placeholder="Contoh: SOP Penanganan PC Blue Screen..." className="w-full px-5 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-400 outline-none font-bold text-lg transition-all"/>
               </div>
 
-              <div className="mb-4 flex gap-2">
-                <label className="flex-1 cursor-pointer flex items-center justify-center gap-2 py-3 border-2 border-dashed border-blue-300 bg-blue-50 text-blue-600 rounded-xl hover:bg-blue-100 transition-all">
-                  {isSimulatingUpload ? <span className="animate-pulse font-bold text-sm">Mengonversi file...</span> : <><Upload size={18}/> <span className="font-bold text-sm">Import File (PDF/Word)</span></>}
+              <div className="mb-6">
+                <label className="flex-1 cursor-pointer flex items-center justify-center gap-3 py-4 border-2 border-dashed border-blue-200 bg-blue-50/50 text-blue-600 rounded-2xl hover:bg-blue-50 transition-all">
+                  {isSimulatingUpload ? <span className="animate-pulse font-bold text-sm">Sedang mengonversi file...</span> : <><Upload size={20}/> <span className="font-bold text-sm">Import File (PDF/Word)</span></>}
                   <input type="file" className="hidden" accept=".pdf,.doc,.docx" onChange={handleImportFile} disabled={isSimulatingUpload} />
                 </label>
               </div>
 
-              <div className="flex-1 flex flex-col">
-                <label className="block text-sm font-bold text-text-primary mb-2 flex justify-between">
+              <div className="flex-1 flex flex-col min-h-[300px]">
+                <label className="block text-sm font-bold text-gray-700 mb-2 flex justify-between">
                   <span>Isi Konten (Markdown)</span>
-                  <span className="text-xs text-brand-orange font-normal bg-orange-50 px-2 py-0.5 rounded">Auto-render di Preview</span>
+                  <span className="text-[10px] text-orange-500 font-bold bg-orange-50 px-2 py-0.5 rounded-md uppercase tracking-wider">Preview Otomatis</span>
                 </label>
                 <textarea 
                   value={editorContent} 
                   onChange={(e) => setEditorContent(e.target.value)} 
                   placeholder="Ketik isi modul di sini, atau import dokumen..." 
-                  className="w-full flex-1 px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-brand-orange outline-none resize-none font-mono text-sm leading-relaxed bg-gray-50/50"
+                  className="w-full flex-1 px-5 py-4 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-400 outline-none resize-none font-mono text-sm leading-relaxed"
                 ></textarea>
               </div>
             </div>
 
-            {/* Kanan: Live Preview Rendering */}
-            <div className="flex-1 bg-light-bg rounded-xl border border-gray-300 shadow-inner p-4 md:p-8 flex flex-col h-full overflow-y-auto">
-              <div className="flex items-center gap-2 mb-6 border-b border-gray-300 pb-3 opacity-50">
-                <Eye size={18} className="text-text-secondary" />
-                <span className="font-bold text-sm text-text-secondary uppercase tracking-widest">Live Preview Host</span>
+            <div className="flex-1 bg-white rounded-[24px] border border-gray-200 shadow-inner p-6 md:p-10 flex flex-col h-full overflow-y-auto bg-grid-slate-100">
+              <div className="flex items-center gap-2 mb-8 border-b border-gray-100 pb-4">
+                <Eye size={20} className="text-gray-400" />
+                <span className="font-bold text-[10px] text-gray-400 uppercase tracking-[0.2em]">Tampilan Host</span>
               </div>
               
-              {/* Tempat Preview Hasil Auto-Convert */}
-              <div className="prose prose-sm md:prose-base max-w-none text-text-primary">
-                {editorTitle ? <h1 className="text-3xl font-bold mb-6 text-brand-orange">{editorTitle}</h1> : <h1 className="text-3xl font-bold mb-6 text-gray-300 italic">Judul Modul...</h1>}
+              <div className="prose prose-orange max-w-none">
+                {editorTitle ? <h1 className="text-3xl font-black mb-8 text-gray-800">{editorTitle}</h1> : <h1 className="text-3xl font-black mb-8 text-gray-200 italic">Judul Modul...</h1>}
                 
                 {editorContent ? (
-                  <div className="whitespace-pre-wrap space-y-4">
-                    {/* Simulasi basic Markdown to UI Element rendering */}
+                  <div className="whitespace-pre-wrap space-y-6 text-gray-600 leading-relaxed">
                     {editorContent.split('\n\n').map((paragraph, idx) => {
                       if(paragraph.startsWith('![')) {
-                        // Render Gambar
                         const url = paragraph.match(/\((.*?)\)/)?.[1];
-                        return <img key={idx} src={url || 'https://via.placeholder.com/400x200'} alt="preview" className="rounded-xl border border-gray-200 shadow-sm w-full object-cover max-h-64" />;
+                        return <img key={idx} src={url || 'https://via.placeholder.com/400x200'} alt="preview" className="rounded-2xl border border-gray-100 shadow-lg w-full object-cover max-h-80" />;
                       } else if (paragraph.startsWith('## ')) {
-                        // Render Heading 2
-                        return <h2 key={idx} className="text-xl font-bold mt-6 mb-2 border-b pb-2">{paragraph.replace('## ', '')}</h2>;
+                        return <h2 key={idx} className="text-xl font-bold text-gray-800 mt-10 mb-4 border-l-4 border-orange-500 pl-4">{paragraph.replace('## ', '')}</h2>;
                       } else {
-                        // Render Text (bold dicover pake dangeruslySetInnerHTML simulasi)
                         return <p key={idx} dangerouslySetInnerHTML={{ __html: paragraph.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') }}></p>
                       }
                     })}
                   </div>
                 ) : (
-                  <div className="flex flex-col items-center justify-center h-48 text-gray-400 space-y-2 opacity-50">
-                    <FileImage size={48} />
-                    <p className="text-sm font-medium">Preview konten akan muncul di sini</p>
+                  <div className="flex flex-col items-center justify-center h-64 text-gray-300 space-y-4">
+                    <FileImage size={64} className="opacity-20" />
+                    <p className="font-bold text-sm uppercase tracking-widest opacity-40">Belum ada konten</p>
                   </div>
                 )}
               </div>
             </div>
-
           </div>
         </div>
       )}
+
+      <ConfirmationModal 
+        isOpen={isDeleteModalOpen}
+        onClose={() => setDeleteModalOpen(false)}
+        onConfirm={confirmDelete}
+        title="Hapus Modul?"
+        message={`Apakah Anda yakin ingin menghapus modul "${selectedMod?.title}"? Tindakan ini tidak dapat dibatalkan.`}
+        confirmText="Ya, Hapus"
+        type="danger"
+      />
     </div>
   );
 };
