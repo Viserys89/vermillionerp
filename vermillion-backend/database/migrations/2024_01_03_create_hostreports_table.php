@@ -14,7 +14,7 @@ return new class extends Migration
             $table->string('shift_schedule');
             $table->integer('diamond_earned')->default(0);
             $table->date('report_date');
-            $table->enum('status', ['Menunggu', 'Diperiksa'])->default('Menunggu');
+            $table->enum('status', ['Menunggu', 'Diperiksa', 'Disetujui', 'Ditolak'])->default('Menunggu');
             $table->timestamps();
         });
     }

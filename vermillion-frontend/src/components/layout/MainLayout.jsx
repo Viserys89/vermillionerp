@@ -93,7 +93,7 @@ const MainLayout = () => {
     {
       name: "Penghasilan",
       icon: <Wallet size={20} />,
-      path: "penghasilan",
+      path: "/dashboard-finance/penghasilan",
     },
     {
       name: "Profil",

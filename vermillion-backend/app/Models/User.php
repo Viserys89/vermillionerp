@@ -35,4 +35,24 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function hostProfile()
+    {
+        return $this->hasOne(HostProfile::class);
+    }
+
+    public function hostReports()
+    {
+        return $this->hasMany(HostReport::class, 'host_id');
+    }
+
+    public function complaints()
+    {
+        return $this->hasMany(Complaint::class, 'employee_id');
+    }
+
+    public function leaves()
+    {
+        return $this->hasMany(Leave::class, 'employee_id');
+    }
 }
