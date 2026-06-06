@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import * as XLSX from "xlsx";
 import axios from "axios";
 import {
   Search,
@@ -47,12 +48,12 @@ const HRDashboard = () => {
   });
 
   const roles = [
-    "Host",
-    "Manager",
-    "Editor",
-    "Admin",
-    "Content Creator",
-    "Producer",
+    "host",
+    "finance",
+    "procurement",
+    "hr",
+    "technician",
+    "performance",
   ];
   const statuses = ["Aktif", "Tidak Aktif", "Cuti", "Resigned"];
   const contracts = ["1 Bulan", "3 Bulan", "6 Bulan", "12 Bulan", "24 Bulan"];
@@ -77,9 +78,9 @@ const HRDashboard = () => {
   // Filter Data
   const filteredEmployees = employees.filter((emp) => {
     const matchesSearch =
-      emp.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      emp.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      emp.phone.includes(searchTerm);
+      (emp.name?.toLowerCase() || "").includes(searchTerm.toLowerCase()) ||
+      (emp.email?.toLowerCase() || "").includes(searchTerm.toLowerCase()) ||
+      (emp.phone || "").includes(searchTerm);
     const matchesStatus =
       filterStatus === "Semua" || emp.status === filterStatus;
     const matchesRole = filterRole === "Semua" || emp.role === filterRole;
@@ -102,17 +103,16 @@ const HRDashboard = () => {
       setSelectedEmployee(employee);
     } else {
       setFormData({
-        name: "",
-        email: "",
-        password: "", // Tambahkan inisiasi password di sini
-        phone: "",
-        dob: "",
-        address: "",
-        role: "",
-        status: "Aktif",
-        contract: "12 Bulan",
-        bankAccount: "",
-        photo: null,
+        name: employee.name || "",
+        email: employee.email || "",
+        phone: employee.phone || "",
+        dob: employee.dob || "",
+        address: employee.address || "",
+        role: employee.role || "",
+        status: employee.status || "Aktif",
+        contract: employee.contract || "12 Bulan",
+        bankAccount: employee.bank_account || "",
+        password: "",
       });
       setSelectedEmployee(null);
     }
@@ -131,33 +131,47 @@ const HRDashboard = () => {
       // Ubah 'bankAccount' dari React state menjadi 'bank_account' sesuai kolom di database MySQL
       const payload = {
         ...formData,
+        password: formData.password,
         bank_account: formData.bankAccount,
       };
 
       if (selectedEmployee) {
         // PROSES EDIT DATA (PUT)
-        const response = await axios.put(`http://localhost:8000/api/employees/${selectedEmployee.id}`, payload);
-        
+        const response = await axios.put(
+          `http://localhost:8000/api/employees/${selectedEmployee.id}`,
+          payload,
+        );
+
         // Update state lokal dengan data dari server
         setEmployees(
           employees.map((emp) =>
-            emp.id === selectedEmployee.id ? response.data : emp
-          )
+            emp.id === selectedEmployee.id ? response.data : emp,
+          ),
         );
-        showNotification("success", `Karyawan ${formData.name} berhasil diperbarui!`);
+        showNotification(
+          "success",
+          `Karyawan ${formData.name} berhasil diperbarui!`,
+        );
       } else {
         // PROSES TAMBAH DATA (POST)
-        const response = await axios.post("http://localhost:8000/api/employees", payload);
-        
+        const response = await axios.post(
+          "http://localhost:8000/api/employees",
+          payload,
+        );
+
         // Tambahkan data baru dari server ke state lokal
         setEmployees([...employees, response.data]);
-        showNotification("success", `Karyawan ${formData.name} berhasil ditambahkan!`);
+        showNotification(
+          "success",
+          `Karyawan ${formData.name} berhasil ditambahkan!`,
+        );
       }
       setIsModalOpen(false);
     } catch (error) {
       console.error("Error saving data:", error);
       // Tangkap pesan error dari Laravel jika email sudah dipakai
-      const errorMsg = error.response?.data?.message || "Terjadi kesalahan pada server!";
+      const errorMsg =
+        error.response?.data?.message || "Terjadi kesalahan pada server!";
       showNotification("error", errorMsg);
     }
   };
@@ -166,10 +180,15 @@ const HRDashboard = () => {
     if (employeeToDelete) {
       try {
         // PROSES HAPUS DATA (DELETE)
-        await axios.delete(`http://localhost:8000/api/employees/${employeeToDelete.id}`);
-        
+        await axios.delete(
+          `http://localhost:8000/api/employees/${employeeToDelete.id}`,
+        );
+
         setEmployees(employees.filter((emp) => emp.id !== employeeToDelete.id));
-        showNotification("success", `Karyawan ${employeeToDelete.name} berhasil dihapus!`);
+        showNotification(
+          "success",
+          `Karyawan ${employeeToDelete.name} berhasil dihapus!`,
+        );
         setIsDeleteConfirmOpen(false);
         setEmployeeToDelete(null);
       } catch (error) {
@@ -198,101 +217,110 @@ const HRDashboard = () => {
   // };
 
   const handleExport = () => {
-    const csv = [
-      [
-        "ID",
-        "Nama",
-        "Email",
-        "Telepon",
-        "Tanggal Lahir",
-        "Alamat",
-        "Role",
-        "Status",
-        "Kontrak",
-        "No. Rekening",
-      ].join(","),
-      ...employees.map((emp) =>
-        [
-          emp.id,
-          emp.name,
-          emp.email,
-          emp.phone,
-          emp.dob,
-          emp.address,
-          emp.role,
-          emp.status,
-          emp.contract,
-          emp.bankAccount,
-        ].join(","),
-      ),
-    ].join("\n");
+    // Membuat header CSV
+    const csvHeader = [
+      "ID",
+      "Nama",
+      "Email",
+      "Telepon",
+      "Tanggal Lahir",
+      "Alamat",
+      "Role",
+      "Status",
+      "Kontrak",
+      "No. Rekening",
+    ].join(",");
 
+    // Mapping data karyawan ke baris CSV
+    const csvRows = employees.map((emp) => {
+      // Alamat dibungkus tanda kutip agar koma di dalam alamat tidak memisahkan kolom
+      const safeAddress = emp.address ? `"${emp.address}"` : "";
+
+      return [
+        emp.id,
+        emp.name,
+        emp.email,
+        emp.phone || "",
+        emp.dob || "",
+        safeAddress,
+        emp.role,
+        emp.status,
+        emp.contract || "",
+        emp.bank_account || "", // Sesuai dengan kolom di database
+      ].join(",");
+    });
+
+    const csv = [csvHeader, ...csvRows].join("\n");
+
+    // Proses Download File
     const blob = new Blob([csv], { type: "text/csv" });
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `employees_${new Date().toISOString().split("T")[0]}.csv`;
+    a.download = `Data_Karyawan_Vermillion_${new Date().toISOString().split("T")[0]}.csv`;
     a.click();
-    showNotification("success", "Data berhasil diekspor!");
+    showNotification("success", "Data berhasil diekspor ke CSV!");
   };
 
-  const handleImportFile = (e) => {
+  const handleImportFile = async (e) => {
     const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        try {
-          const csv = event.target.result;
-          const lines = csv.split("\n").slice(1);
-          const maxId =
-            employees.length > 0 ? Math.max(...employees.map((e) => e.id)) : 0;
+    if (!file) return;
 
-          const newEmployees = lines
-            .filter((line) => line.trim())
-            .map((line, idx) => {
-              // Perhatikan: 'id' diganti menjadi '_'
-              const [
-                _,
-                name,
-                email,
-                phone,
-                dob,
-                address,
-                role,
-                status,
-                contract,
-                bankAccount,
-              ] = line.split(",").map((s) => s.trim());
+    const reader = new FileReader();
 
-              return {
-                id: maxId + idx + 1, // Menggunakan ID tertinggi ditambah urutan
-                name,
-                email,
-                phone,
-                dob,
-                address,
-                role,
-                status,
-                contract,
-                bankAccount,
-                photo: null,
-              };
-            });
-          setEmployees([...employees, ...newEmployees]);
-          setIsImportOpen(false);
-          showNotification("success", "Data karyawan berhasil diimport!");
-        } catch (error) {
-          console.error(error);
-          showNotification(
-            "error",
-            "Gagal mengimport file. Pastikan format CSV benar.",
-          );
+    reader.onload = async (event) => {
+      try {
+        const data = new Uint8Array(event.target.result);
+
+        const workbook = XLSX.read(data, { type: "array" });
+        const sheetName = workbook.SheetNames[0];
+        const worksheet = workbook.Sheets[sheetName];
+
+        const rows = XLSX.utils.sheet_to_json(worksheet);
+
+        let successCount = 0;
+        let failCount = 0;
+
+        for (const row of rows) {
+          const payload = {
+            name: row.Nama,
+            email: row.Email,
+            phone: row.Telepon,
+            dob: row["Tanggal Lahir"],
+            address: row.Alamat,
+            role: row.Role,
+            status: row.Status,
+            contract: row.Kontrak,
+            bank_account: row["No Rekening"] || row["No. Rekening"],
+            password: "vermillion123",
+          };
+
+          try {
+            await axios.post("http://localhost:8000/api/employees", payload);
+            successCount++;
+          } catch (apiError) {
+            console.log("ERROR DATA:", apiError.response?.data);
+            console.log("PAYLOAD:", payload);
+            failCount++;
+          }
         }
-      };
-      reader.readAsText(file);
-    }
-  };
 
+        // ambil ulang data setelah import selesai
+        const response = await axios.get("http://localhost:8000/api/employees");
+        setEmployees(response.data);
+
+        showNotification(
+          "success",
+          `Import selesai. Berhasil: ${successCount}, Gagal: ${failCount}`,
+        );
+      } catch (error) {
+        console.error(error);
+        showNotification("error", "Gagal membaca file Excel");
+      }
+    };
+
+    reader.readAsArrayBuffer(file);
+  };
   return (
     <div className="animate-fade-in space-y-4">
       {notification && (
@@ -550,7 +578,7 @@ const HRDashboard = () => {
                   onClick={() =>
                     setCurrentPage((prev) => Math.min(prev + 1, totalPages))
                   }
-                  disabled={currentPage === totalPages}
+                  disabled={currentPage >= totalPages || totalPages === 0}
                   className="p-2 border border-gray-300 rounded-lg text-gray-600 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
                 >
                   <ChevronRight size={16} />
@@ -621,7 +649,8 @@ const HRDashboard = () => {
               {/* Kolom Password Baru */}
               <div className="flex flex-col gap-2">
                 <label className="text-sm font-bold text-text-primary">
-                  Password {selectedEmployee ? "(Kosongkan jika tidak diubah)" : "*"}
+                  Password{" "}
+                  {selectedEmployee ? "(Kosongkan jika tidak diubah)" : "*"}
                 </label>
                 <input
                   type="text" // Gunakan 'text' agar HR bisa melihat password yang dibuatkan, atau 'password' jika ingin disensor
@@ -631,7 +660,11 @@ const HRDashboard = () => {
                     setFormData({ ...formData, password: e.target.value })
                   }
                   className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-brand-orange focus:border-transparent transition-all text-sm"
-                  placeholder={selectedEmployee ? "Kosongkan jika tetap pakai password lama" : "Buatkan password"}
+                  placeholder={
+                    selectedEmployee
+                      ? "Kosongkan jika tetap pakai password lama"
+                      : "Buatkan password"
+                  }
                 />
               </div>
               <div className="flex flex-col gap-2">
@@ -840,7 +873,7 @@ const HRDashboard = () => {
               </code>
               <input
                 type="file"
-                accept=".csv"
+                accept=".csv,.xlsx,.xls"
                 onChange={handleImportFile}
                 className="w-full text-sm file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-brand-orange file:text-white hover:file:bg-orange-600 cursor-pointer"
               />

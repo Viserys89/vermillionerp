@@ -2,10 +2,16 @@ import React from 'react';
 import { Users, Diamond, Award, Megaphone, Send } from 'lucide-react';
 
 const BerandaHost = () => {
+  const user = JSON.parse(
+  localStorage.getItem("user")
+);
   return (
     <div className="animate-fade-in">
       <h1 className="text-xl font-medium mb-6">
-        Halo, <span className="text-orange-500 font-bold">Vicky!</span>
+       Halo,
+<span className="text-orange-500 font-bold">
+  {user?.name}
+</span>
       </h1>
 
       <section className="grid grid-cols-1 md:grid-cols-2 gap-6">

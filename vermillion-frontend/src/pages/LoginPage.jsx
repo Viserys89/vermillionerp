@@ -2,30 +2,64 @@ import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { Mail, Lock } from "lucide-react";
 import logoVermillion from "../assets/logovermiloren.png";
+import axios from "axios";
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    if (email === "host" && password === "123") {
-      navigate("/dashboard-host");
-    } else if (email === "finance" && password === "123") {
-      navigate("/dashboard-finance");
-    } else if (email === "procurement" && password === "123") {
-      navigate("/dashboard-procurement");
-    } else if (email === "hr" && password === "123") {
-      navigate("/dashboard-hr");
-    }
-      else if (email === "technician" && password === "123") {
-        navigate("/dashboard-tech");
-    } else if (email === "performance" && password === "123") {
-        navigate("/dashboard-performance");
-    } else {
-      alert("Email atau Password salah! (Gunakan password: 123)");
-    }
+
+    try {
+      const response = await axios.post("http://localhost:8000/api/login", {
+        email,
+        password,
+      });
+      console.log("LOGIN RESPONSE:", response.data);
+      const user = response.data.user;
+      console.log("ROLE:", user.role);
+      console.log("USER:", user);
+      localStorage.setItem("user", JSON.stringify(user));
+
+      switch (user.role.toLowerCase()) {
+        case "host":
+          navigate("/dashboard-host");
+          break;
+
+        case "finance":
+          navigate("/dashboard-finance");
+          break;
+
+        case "procurement":
+          navigate("/dashboard-procurement");
+          break;
+
+        case "hr":
+          navigate("/dashboard-hr");
+          break;
+
+        case "technician":
+          navigate("/dashboard-tech");
+          break;
+
+        case "performance":
+          navigate("/dashboard-performance");
+          break;
+
+        default:
+          alert("Role tidak dikenali");
+      }
+    } catch (error) {
+  console.error("LOGIN ERROR:", error);
+
+  const message =
+    error.response?.data?.message ||
+    "Terjadi kesalahan saat login";
+
+  alert(message);
+}
   };
 
   return (

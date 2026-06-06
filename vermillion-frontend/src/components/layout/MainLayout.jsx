@@ -57,6 +57,11 @@ const MainLayout = () => {
       path: "/dashboard-host/laporan",
     },
     {
+      name: "Izin & Cuti",
+      icon: <FileText size={20} />,
+      path: "/dashboard-host/izin",
+    },
+    {
       name: "Pengaduan",
       icon: <Megaphone size={20} />,
       path: "",
