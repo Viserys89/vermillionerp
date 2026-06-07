@@ -7,12 +7,14 @@ use Illuminate\Database\Eloquent\Model;
 class Leave extends Model
 {
     protected $table = 'leaves';
-    
+
     protected $fillable = [
-        'employee_id', 
-        'leave_type', 
-        'date_range', 
-        'reason', 
+        'employee_id',
+        'leave_type',
+        'date_range',
+        'start_date',
+        'end_date',
+        'reason',
         'status'
     ];
 
