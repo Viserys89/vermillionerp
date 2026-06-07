@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Facility;
 use App\Models\FacilityRequest;
 use Illuminate\Http\Request;
 
@@ -11,44 +10,21 @@ class FacilityRequestController extends Controller
     public function index()
     {
         return response()->json(
-            FacilityRequest::with([
-                'facility',
-                'user'
-            ])->get()
+            FacilityRequest::with('user')
+                ->latest('id')
+                ->get()
         );
     }
 
     public function store(Request $request)
     {
-        $facility =
-            Facility::findOrFail(
-                $request->facility_id
-            );
-
-        // cek stok tersedia
-        if ($facility->available_quantity <= 0) {
-
-            return response()->json([
-                'message' => 'Fasilitas habis'
-            ], 400);
-
-        }
-
-        // kurangi stok
-        $facility->available_quantity--;
-
-        $facility->save();
-
-        // simpan request
         $requestData =
             FacilityRequest::create([
-                'user_id' => $request->user_id,
-                'facility_id' => $request->facility_id,
-                'request_date' => $request->request_date,
-                'start_datetime' => $request->start_datetime,
-                'end_datetime' => $request->end_datetime,
-                'purpose' => $request->purpose,
-                'status' => 'Pending'
+                'user_id'      => $request->user_id,
+                'nama_barang'  => $request->nama_barang,
+                'link_toko'    => $request->link_toko,
+                'deskripsi'    => $request->deskripsi,
+                'status'       => 'Pending'
             ]);
 
         return response()->json(
@@ -57,40 +33,41 @@ class FacilityRequestController extends Controller
         );
     }
 
-    public function update(Request $request, $id)
+    public function show($id)
     {
-        $facilityRequest =
+        return response()->json(
+            FacilityRequest::with('user')
+                ->findOrFail($id)
+        );
+    }
+
+    public function update(
+        Request $request,
+        $id
+    ) {
+        $requestData =
             FacilityRequest::findOrFail($id);
 
-        $facilityRequest->update(
+        $requestData->update(
             $request->all()
         );
 
         return response()->json(
-            $facilityRequest
+            $requestData
         );
     }
 
-   public function destroy($id)
-{
-    $requestData =
-        FacilityRequest::findOrFail($id);
+    public function destroy($id)
+    {
+        $requestData =
+            FacilityRequest::findOrFail($id);
 
-    $facility =
-        Facility::findOrFail(
-            $requestData->facility_id
-        );
+        $requestData->delete();
 
-    $facility->available_quantity++;
-
-    $facility->save();
-
-    $requestData->delete();
-
-    return response()->json([
-        'message' => 'Request deleted'
-    ]);
-}
+        return response()->json([
+            'message' => 'Request deleted'
+        ]);
+    }
 
     public function approve($id)
     {
@@ -123,14 +100,15 @@ class FacilityRequestController extends Controller
     }
 
     public function getByUser($id)
-{
-    return response()->json(
-        FacilityRequest::with([
-            'facility',
-            'user'
-        ])
-        ->where('user_id', $id)
-        ->get()
-    );
-}
+    {
+        return response()->json(
+            FacilityRequest::with('user')
+                ->where(
+                    'user_id',
+                    $id
+                )
+                ->latest('id')
+                ->get()
+        );
+    }
 }

@@ -107,20 +107,19 @@ Route::apiResource(
 );
 
 Route::put(
-    '/facility-requests/{id}/approve',
+    'facility-requests/{id}/approve',
     [FacilityRequestController::class, 'approve']
 );
 
 Route::put(
-    '/facility-requests/{id}/reject',
+    'facility-requests/{id}/reject',
     [FacilityRequestController::class, 'reject']
 );
 
 Route::get(
-    '/facility-requests/user/{id}',
+    'facility-requests/user/{id}',
     [FacilityRequestController::class, 'getByUser']
 );
-
 
 // API LAPORAN
 
