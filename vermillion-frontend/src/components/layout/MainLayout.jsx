@@ -69,7 +69,7 @@ const MainLayout = () => {
     {
       name: "Request",
       icon: <PenTool size={20} />,
-      path: "",
+      path: "/dashboard-host/request",
     },
     {
       name: "Contact",
