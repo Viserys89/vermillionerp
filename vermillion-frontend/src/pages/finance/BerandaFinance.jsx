@@ -16,7 +16,7 @@ const BerandaFinance = () => {
 
   const fetchDashboard = () => {
     const query = new URLSearchParams(filters).toString();
-    fetch(`http://127.0.0.1:8000/api/finance/dashboard?${query}`)
+    fetch( `${import.meta.env.VITE_API_URL}/finance/dashboard?${query}`)
       .then(res => res.json())
       .then(data => {
         if (!data.message) {

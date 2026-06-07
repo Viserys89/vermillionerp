@@ -18,7 +18,7 @@ const PenghasilanFinance = () => {
       search: searchTerm
     }).toString();
     
-    fetch(`http://127.0.0.1:8000/api/finance/income?${query}`)
+    fetch(`${import.meta.env.VITE_API_URL}/finance/income?${query}`)
       .then(res => res.json())
       .then(data => {
         if (Array.isArray(data)) {

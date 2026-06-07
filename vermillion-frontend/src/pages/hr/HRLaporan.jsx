@@ -36,7 +36,7 @@ const HRLaporan = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const fetchReports = useCallback(async () => {
     try {
-      const response = await axios.get("http://localhost:8000/api/reports");
+      const response = await axios.get( `${import.meta.env.VITE_API_URL}/reports`);
 
       setReports(response.data);
     } catch (error) {

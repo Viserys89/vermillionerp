@@ -33,7 +33,7 @@ const HRKaryawan = () => {
   useEffect(() => {
     const fetchEmployees = async () => {
       try {
-        const response = await axios.get("http://localhost:8000/api/employees");
+        const response = await axios.get( `${import.meta.env.VITE_API_URL}/employees`);
         setEmployees(response.data);
         setLoading(false);
       } catch (err) {

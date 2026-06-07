@@ -12,7 +12,7 @@ const BerandaHost = () => {
   });
 
   useEffect(() => {
-    fetch(`http://127.0.0.1:8000/api/host/${user.id}/dashboard`)
+    fetch(`${import.meta.env.VITE_API_URL}/login/host/${user.id}/dashboard`)
       .then(res => res.json())
       .then(result => {
         if (!result.message) {

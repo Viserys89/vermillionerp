@@ -15,7 +15,7 @@ const LaporanHost = () => {
   });
 
   const fetchReports = () => {
-    fetch(`http://127.0.0.1:8000/api/host/${user.id}/reports`)
+    fetch(`${import.meta.env.VITE_API_URL}/host/${user.id}/reports`)
       .then(res => res.json())
       .then(data => {
         if (Array.isArray(data)) {
