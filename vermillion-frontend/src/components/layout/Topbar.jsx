@@ -1,13 +1,37 @@
-import { useState, } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom"; // Tambahkan useNavigate
 import { Menu, User, ChevronDown, LogOut, Settings } from "lucide-react";
 import logo from "../../assets/logovermiloren.png";
 
 const Topbar = ({ toggleSidebar, roleName }) => {
   const [isDropdownOpen, setDropdownOpen] = useState(false);
-  // Ambil path sekarang untuk menentukan prefix dashboard-nya
-const location = useLocation();
-const dashboardPrefix = location.pathname.split('/')[1]; // akan mengambil 'dashboard-host' dsb.
+
+  const location = useLocation();
+  const navigate = useNavigate(); // Hook untuk navigasi
+  const dashboardPrefix = location.pathname.split("/")[1];
+
+  // Mengambil data user dari localStorage saat komponen pertama kali dimuat
+  const [currentUser] = useState(() => {
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      try {
+        return JSON.parse(storedUser);
+      } catch (error) {
+        console.error("Gagal membaca data user", error);
+        return null;
+      }
+    }
+    return null;
+  });
+
+  // Fungsi untuk menangani proses Logout
+  const handleLogout = () => {
+    // 1. Hapus data user dari localStorage
+    localStorage.removeItem("user");
+    // 2. Arahkan kembali ke halaman login
+    navigate("/");
+  };
+
   return (
     <header className="bg-white/40 backdrop-blur-xl border border-white/60 rounded-[20px] px-8 py-4 flex justify-between items-center shadow-lg relative z-[999]">
       <div className="flex items-center gap-4">
@@ -28,9 +52,13 @@ const dashboardPrefix = location.pathname.split('/')[1]; // akan mengambil 'dash
         onClick={() => setDropdownOpen(!isDropdownOpen)}
       >
         <div className="text-right hidden sm:block">
-          <p className="font-bold text-sm leading-none mb-1">USER</p>
-          <p className="text-orange-500 text-xs font-semibold leading-none">
-            {roleName || "User"}
+          {/* Tampilkan Nama User dari localStorage, jika tidak ada tampilkan "User" */}
+          <p className="font-bold text-sm leading-none mb-1 capitalize">
+            {currentUser?.name || "User"}
+          </p>
+          {/* Tampilkan Role, prioritaskan prop roleName, fallback ke localStorage */}
+          <p className="text-orange-500 text-xs font-semibold leading-none capitalize">
+            {roleName || currentUser?.role || "Role"}
           </p>
         </div>
 
@@ -45,21 +73,23 @@ const dashboardPrefix = location.pathname.split('/')[1]; // akan mengambil 'dash
 
         {isDropdownOpen && (
           <div className="absolute top-[125%] right-0 w-44 bg-white/90 backdrop-blur-md border border-white/60 rounded-2xl shadow-xl py-2 animate-slide-up z-[1001]">
-<Link to={`/${dashboardPrefix}/profile`}>
-  <button className="w-full px-5 py-3 text-left text-sm flex items-center gap-2 hover:text-orange-500 hover:bg-orange-50/50 transition-colors">
-    <User size={16} /> Profil
-  </button>
-</Link>
+            <Link to={`/${dashboardPrefix}/profile`}>
+              <button className="w-full px-5 py-3 text-left text-sm flex items-center gap-2 hover:text-orange-500 hover:bg-orange-50/50 transition-colors">
+                <User size={16} /> Profil
+              </button>
+            </Link>
             <button className="w-full px-5 py-3 text-left text-sm flex items-center gap-2 hover:text-orange-500 hover:bg-orange-50/50 transition-colors">
               <Settings size={16} /> Settings
             </button>
             <hr className="my-1 border-gray-100" />
-            <a
-              href="/"
+
+            {/* Ubah tag <a> menjadi <button> dan panggil handleLogout */}
+            <button
+              onClick={handleLogout}
               className="w-full px-5 py-3 text-left text-sm flex items-center gap-2 text-red-500 hover:bg-red-50 transition-colors font-medium"
             >
               <LogOut size={16} /> Logout
-            </a>
+            </button>
           </div>
         )}
       </div>

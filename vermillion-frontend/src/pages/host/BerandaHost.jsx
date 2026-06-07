@@ -1,15 +1,32 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Users, Diamond, Award, Megaphone, Send } from 'lucide-react';
 
 const BerandaHost = () => {
-  const user = JSON.parse(
-  localStorage.getItem("user")
-);
+  const user = JSON.parse(localStorage.getItem("user")) || { id: 1, name: 'Guest' };
+  const [data, setData] = useState({
+    team: '-',
+    total_diamonds: 0,
+    tier: 'Bronze',
+    pengaduan_count: 0,
+    request_count: 0
+  });
+
+  useEffect(() => {
+    fetch(`http://127.0.0.1:8000/api/host/${user.id}/dashboard`)
+      .then(res => res.json())
+      .then(result => {
+        if (!result.message) {
+          setData(result);
+        }
+      })
+      .catch(err => console.error(err));
+  }, [user.id]);
+
   return (
     <div className="animate-fade-in">
       <h1 className="text-xl font-medium mb-6">
        Halo,
-<span className="text-orange-500 font-bold">
+<span className="text-orange-500 font-bold ml-1">
   {user?.name}
 </span>
       </h1>
@@ -20,7 +37,7 @@ const BerandaHost = () => {
           <h3 className="text-xl font-bold relative z-10">Team</h3>
           <div className="flex items-center gap-3 text-3xl font-bold mt-4 relative z-10">
             <Users size={32} className="text-purple-700" />
-            <span>Ventura</span>
+            <span>{data.team}</span>
           </div>
           <Users size={150} className="absolute -right-4 -bottom-6 opacity-15 rotate-[-15deg] z-0" />
         </div>
@@ -30,7 +47,7 @@ const BerandaHost = () => {
           <h3 className="text-xl font-bold relative z-10">Diamonds</h3>
           <div className="flex items-center gap-3 text-3xl font-bold mt-4 relative z-10">
             <Diamond size={32} className="text-orange-700" />
-            <span>12.000</span>
+            <span>{data.total_diamonds.toLocaleString('id-ID')}</span>
           </div>
           <Diamond size={150} className="absolute -right-4 -bottom-6 opacity-15 rotate-[-15deg]" />
         </div>
@@ -40,7 +57,7 @@ const BerandaHost = () => {
           <h3 className="text-xl font-bold relative z-10">Tier</h3>
           <div className="flex items-center gap-3 text-3xl font-bold mt-4 relative z-10">
             <Award size={32} className="text-gray-600" />
-            <span>Silver</span>
+            <span>{data.tier}</span>
           </div>
           <Award size={150} className="absolute -right-4 -bottom-6 opacity-15 rotate-[-15deg]" />
         </div>
@@ -50,7 +67,7 @@ const BerandaHost = () => {
           <h3 className="text-xl font-bold relative z-10 text-gray-800">Pengaduan Terkirim</h3>
           <div className="flex items-center gap-3 text-3xl font-bold mt-4 relative z-10 text-gray-800">
             <Megaphone size={32} className="text-red-700" />
-            <span>3</span>
+            <span>{data.pengaduan_count}</span>
           </div>
           <Megaphone size={150} className="absolute -right-4 -bottom-6 opacity-15 rotate-[-15deg]" />
         </div>
@@ -60,7 +77,7 @@ const BerandaHost = () => {
           <h3 className="text-xl font-bold relative z-10 text-gray-800">Request Terkirim</h3>
           <div className="flex items-center gap-3 text-3xl font-bold mt-4 relative z-10 text-gray-800">
             <Send size={32} className="text-blue-700" />
-            <span>1</span>
+            <span>{data.request_count}</span>
           </div>
           <Send size={150} className="absolute -right-4 -bottom-6 opacity-15 rotate-[-15deg]" />
         </div>

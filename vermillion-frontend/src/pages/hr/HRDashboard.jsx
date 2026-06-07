@@ -103,17 +103,18 @@ const HRDashboard = () => {
       setSelectedEmployee(employee);
     } else {
       setFormData({
-        name: employee.name || "",
-        email: employee.email || "",
-        phone: employee.phone || "",
-        dob: employee.dob || "",
-        address: employee.address || "",
-        role: employee.role || "",
-        status: employee.status || "Aktif",
-        contract: employee.contract || "12 Bulan",
-        bankAccount: employee.bank_account || "",
+        name: "",
+        email: "",
+        phone: "",
+        dob: "",
+        address: "",
+        role: "",
+        status: "Aktif",
+        contract: "12 Bulan",
+        bankAccount: "",
         password: "",
       });
+
       setSelectedEmployee(null);
     }
     setIsModalOpen(true);
