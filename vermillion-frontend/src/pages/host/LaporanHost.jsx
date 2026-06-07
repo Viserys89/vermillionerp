@@ -15,7 +15,12 @@ const LaporanHost = () => {
   });
 
   const fetchReports = () => {
-    fetch(`http://127.0.0.1:8000/api/host/${user.id}/reports`)
+    fetch(`http://127.0.0.1:8000/api/host/${user.id}/reports`, {
+      headers: {
+            'Accept': 'application/json', // <--- INI PENTING
+            'Content-Type': 'application/json'
+        }
+    })
       .then(res => res.json())
       .then(data => {
         if (Array.isArray(data)) {

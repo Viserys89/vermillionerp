@@ -7,7 +7,6 @@ return [
     'allowed_methods' => ['*'],
 
 'allowed_origins' => [
-        'https://vermillionerp.vercel.app',
         'http://localhost:5173',
     ],
 
@@ -19,6 +18,6 @@ return [
 
     'max_age' => 0,
 
-    'supports_credentials' => false,
+    'supports_credentials' => true,
 
 ];

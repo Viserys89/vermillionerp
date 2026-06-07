@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   User,
   Mail,
@@ -23,7 +23,34 @@ const ProfilePage = () => {
     role: user?.role,
     team: user?.team,
   };
+  const [isHRModalOpen, setHRModalOpen] = useState(false);
+  const [modalContent, setModalContent] = useState({ title: "", message: "" });
 
+  const openHRModal = (type) => {
+    if (type === "edit") {
+      setModalContent({
+        title: "Edit Profil",
+        message:
+          "Untuk melakukan perubahan data profil, silakan hubungi bagian HR melalui WhatsApp.",
+      });
+    } else {
+      setModalContent({
+        title: "Ubah Kata Sandi",
+        message:
+          "Untuk bantuan reset atau ubah kata sandi, silakan hubungi bagian HR melalui WhatsApp.",
+      });
+    }
+    setHRModalOpen(true);
+  };
+
+  const handleWhatsAppHR = () => {
+    // Ganti dengan nomor WA HR yang sebenarnya
+    window.open("https://wa.me/6281234567890", "_blank");
+  };
+  const handleLogout = () => {
+  localStorage.removeItem("user");
+  window.location.href = "/login";
+};
   return (
     <div className="max-w-4xl mx-auto space-y-6 animate-fade-in pb-10">
       {/* --- HEADER PROFILE --- */}
@@ -57,7 +84,10 @@ const ProfilePage = () => {
               {userData.team}
             </p>
             <div className="flex gap-2 mt-4">
-              <button className="flex items-center gap-2 px-6 py-2 bg-orange-500 text-white rounded-xl font-bold text-sm shadow-lg shadow-orange-200 hover:bg-orange-600 transition-all">
+              <button
+                onClick={() => openHRModal("edit")}
+                className="flex items-center gap-2 px-6 py-2 bg-orange-500 text-white rounded-xl font-bold text-sm shadow-lg shadow-orange-200 hover:bg-orange-600 transition-all"
+              >
                 <Edit3 size={16} /> Edit Profil
               </button>
             </div>
@@ -153,7 +183,10 @@ const ProfilePage = () => {
                 <p className="text-[10px] text-gray-400 uppercase font-bold tracking-wider">
                   Keamanan
                 </p>
-                <button className="text-sm font-bold text-rose-500 hover:underline">
+                <button
+                  onClick={() => openHRModal("password")}
+                  className="text-sm font-bold text-rose-500 hover:underline"
+                >
                   Ubah Kata Sandi
                 </button>
               </div>
@@ -161,13 +194,40 @@ const ProfilePage = () => {
 
             {/* Logout khusus mobile/tambahan */}
             <div className="pt-4 mt-4 border-t border-white/40">
-              <button className="w-full flex items-center justify-center gap-2 py-4 bg-red-50 text-red-500 rounded-2xl font-bold hover:bg-red-100 transition-colors">
+              <button onClick={handleLogout} className="w-full flex items-center justify-center gap-2 py-4 bg-red-50 text-red-500 rounded-2xl font-bold hover:bg-red-100 transition-colors">
                 <LogOut size={20} /> Keluar dari Akun
               </button>
             </div>
           </div>
         </section>
       </div>
+      {/* Modal HR */}
+{isHRModalOpen && (
+  <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/40 backdrop-blur-sm p-4 animate-fade-in">
+    <div className="bg-white p-8 rounded-[30px] w-full max-w-sm text-center shadow-2xl">
+      <div className="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-4">
+        <Phone size={32} />
+      </div>
+      <h3 className="text-xl font-bold mb-2">{modalContent.title}</h3>
+      <p className="text-sm text-gray-500 mb-6">{modalContent.message}</p>
+      
+      <div className="flex gap-3">
+        <button 
+          onClick={() => setHRModalOpen(false)}
+          className="flex-1 py-3 bg-gray-100 rounded-xl font-bold text-gray-600"
+        >
+          Tutup
+        </button>
+        <button 
+          onClick={handleWhatsAppHR}
+          className="flex-1 py-3 bg-green-500 text-white rounded-xl font-bold hover:bg-green-600"
+        >
+          Hubungi HR
+        </button>
+      </div>
+    </div>
+  </div>
+)}
     </div>
   );
 };

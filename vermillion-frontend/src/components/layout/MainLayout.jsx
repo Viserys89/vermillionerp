@@ -76,11 +76,6 @@ const MainLayout = () => {
       icon: <Contact size={20} />,
       path: "/dashboard-host/contact",
     },
-    {
-      name: "Pengaturan",
-      icon: <Settings size={20} />,
-      path: "",
-    },
   ];
 
   const FinanceMenu = [

@@ -7,7 +7,7 @@ use App\Models\User;
 
 class FacilityRequest extends Model
 {
-    protected $table = 'facility_request';
+    protected $table = 'facility_requests';
 
     public $timestamps = false;
 

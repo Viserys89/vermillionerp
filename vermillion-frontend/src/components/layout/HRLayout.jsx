@@ -45,11 +45,6 @@ const HRLayout = () => {
       icon: <Contact size={20} />,
       path: "/dashboard-hr/contact",
     },
-    {
-      name: "Pengaturan",
-      icon: <Settings size={20} />,
-      path: "/dashboard-hr/settings",
-    },
 
   ];
 

@@ -3,10 +3,10 @@ import axios from 'axios';
 import { Plus,X,CheckCircle, Send } from 'lucide-react';
 
 const RequestHost = () => {
-  const [facilities, setFacilities] = useState([]);
+  const [setFacilities] = useState([]);
   const [facilityRequests, setFacilityRequests] = useState([]);
 
-  const [loadingFacilities, setLoadingFacilities] = useState(true);
+  const [setLoadingFacilities] = useState(true);
   const [loadingRequests, setLoadingRequests] = useState(true);
 
   const user = JSON.parse(
