@@ -16,10 +16,18 @@ const ContactRole = () => {
   const [loading, setLoading] = useState(true);
 
   // Ambil data dari API Laravel saat halaman dibuka
-  useEffect(() => {
+useEffect(() => {
     const fetchContacts = async () => {
       try {
-        const response = await axios.get("http://localhost:8000/api/contacts");
+        const response = await axios.get(
+          `${import.meta.env.VITE_API_URL}/contacts`, 
+          {
+            headers: {
+              "ngrok-skip-browser-warning": "69420"
+            }
+          }
+        );
+
         if (response.data.success) {
           setContactData(response.data.data);
         }

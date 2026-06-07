@@ -64,7 +64,13 @@ const HRDashboard = () => {
   useEffect(() => {
     const fetchEmployees = async () => {
       try {
-        const response = await axios.get("http://localhost:8000/api/employees");
+        const response = await axios.get(`${import.meta.env.VITE_API_URL}/employees`,
+          {
+              headers: {
+              "ngrok-skip-browser-warning": "69420"
+            }
+          }
+        );
         setEmployees(response.data); // Memasukkan data dari Laravel ke dalam state
       } catch (error) {
         console.error("Gagal mengambil data karyawan:", error);
