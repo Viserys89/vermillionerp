@@ -16,23 +16,22 @@ const ContactRole = () => {
   const [loading, setLoading] = useState(true);
 
   // Ambil data dari API Laravel saat halaman dibuka
-useEffect(() => {
+  useEffect(() => {
     const fetchContacts = async () => {
       try {
         const response = await axios.get(
-          `${import.meta.env.VITE_API_URL}/employees`, 
-          {
-            headers: {
-              "ngrok-skip-browser-warning": "69420"
-            }
-          }
+          `${import.meta.env.VITE_API_URL}/employees`,
+          { headers: { "ngrok-skip-browser-warning": "69420" } },
         );
 
-        if (response.data.success) {
-          setContactData(response.data.data);
+        // LANGSUNG ambil response.data karena server ngirim array langsung
+        if (Array.isArray(response.data)) {
+          setContactData(response.data);
+        } else {
+          console.error("Format data bukan array:", response.data);
         }
       } catch (error) {
-        console.error("Gagal mengambil data kontak dari database:", error);
+        console.error("Gagal ambil data:", error);
       } finally {
         setLoading(false);
       }
@@ -42,34 +41,37 @@ useEffect(() => {
   }, []);
 
   // Membuat tombol filter (Chips) otomatis mengikuti nama tim yang unik dari DB
-  const divisions = useMemo(() => {
-    const baseDivisions = ["All"];
-    contactData.forEach((user) => {
-      if (user.team && !baseDivisions.includes(user.team)) {
-        baseDivisions.push(user.team);
-      }
-    });
-    return baseDivisions;
-  }, [contactData]);
+ const divisions = useMemo(() => {
+  const baseDivisions = ["All"];
+  
+  contactData.forEach((user) => {
+    // Cari nilai divisi yang valid dari kolom apapun yang ada isinya
+    const teamValue = user.team || user.divisi || user.department || user.role;
+    
+    // HANYA masukkan ke list kalau ada isinya dan belum ada di tombol filter
+    if (teamValue && !baseDivisions.includes(teamValue)) {
+      baseDivisions.push(teamValue);
+    }
+  });
+  
+  return baseDivisions;
+}, [contactData]);
 
   // Filter pencarian berdasarkan nama atau tim
-const filteredContacts = useMemo(() => {
+  const filteredContacts = useMemo(() => {
   return contactData.filter((contact) => {
-    // 1. Ambil nilai team dengan mencari di berbagai kemungkinan nama kolom
-    const teamValue = contact.team || contact.divisi || contact.department || "";
+    // Standarisasi cara ambil divisi agar sama persis dengan 'divisions'
+    const teamValue = contact.team || contact.divisi || contact.department || contact.role || "";
     
-    // 2. Pastikan searchTerm tidak error jika kosong
     const searchLower = searchTerm.toLowerCase();
-
-    // 3. Cek pencarian (name atau team)
     const nameMatch = contact.name?.toLowerCase().includes(searchLower);
     const teamMatch = teamValue.toLowerCase().includes(searchLower);
+    
     const matchesSearch = nameMatch || teamMatch;
-
-    // 4. Cek Filter (Otomatis menyesuaikan dengan nama kolom yang ditemukan)
-    const matchesFilter =
-      activeFilter === "All" || teamValue === activeFilter;
-
+    
+    // Sekarang filter 'All' atau berdasarkan 'teamValue' yang sudah terstandarisasi
+    const matchesFilter = activeFilter === "All" || teamValue === activeFilter;
+    
     return matchesSearch && matchesFilter;
   });
 }, [searchTerm, activeFilter, contactData]);
@@ -142,23 +144,26 @@ const filteredContacts = useMemo(() => {
                 <div className="absolute -right-4 -top-4 w-20 h-20 bg-orange-500/5 rounded-full group-hover:scale-150 transition-transform duration-500"></div>
 
                 <div className="flex items-start gap-4 relative z-10">
-    <div className="w-14 h-14 bg-gradient-to-tr from-orange-100 to-white border border-orange-200 rounded-2xl flex items-center justify-center text-orange-600">
-      <Briefcase size={24} />
-    </div>
-    <div>
-      <h4 className="font-bold text-gray-800">
-        {contact.name || "Tanpa Nama"}
-      </h4>
-      {/* KITA CEK SEMUA OPSI NAMA KOLOM TEAM DI SINI */}
-      <p className="text-[10px] font-bold text-orange-500 tracking-widest mb-1 uppercase">
-        {contact.team || contact.divisi || contact.department || "General"}
-      </p>
-      <p className="text-xs text-gray-400 flex items-center gap-1">
-        <ShieldCheck size={12} className="text-emerald-500" />{" "}
-        {contact.role || "Staff"}
-      </p>
-    </div>
-  </div>
+                  <div className="w-14 h-14 bg-gradient-to-tr from-orange-100 to-white border border-orange-200 rounded-2xl flex items-center justify-center text-orange-600">
+                    <Briefcase size={24} />
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-gray-800">
+                      {contact.name || "Tanpa Nama"}
+                    </h4>
+                    {/* KITA CEK SEMUA OPSI NAMA KOLOM TEAM DI SINI */}
+                    <p className="text-[10px] font-bold text-orange-500 tracking-widest mb-1 uppercase">
+                      {contact.team ||
+                        contact.divisi ||
+                        contact.department ||
+                        "General"}
+                    </p>
+                    <p className="text-xs text-gray-400 flex items-center gap-1">
+                      <ShieldCheck size={12} className="text-emerald-500" />{" "}
+                      {contact.role || "Staff"}
+                    </p>
+                  </div>
+                </div>
 
                 <div className="mt-6 flex gap-2 relative z-10">
                   <button

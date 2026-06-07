@@ -72,11 +72,12 @@ const HRLaporan = () => {
       data.append("type", formData.type);
       data.append("file", formData.file);
 
-      await axios.post("http://localhost:8000/api/reports", data, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
+     await axios.post(`${import.meta.env.VITE_API_URL}/reports`, data, {
+  headers: {
+    "Content-Type": "multipart/form-data",
+    "ngrok-skip-browser-warning": "69420" // WAJIB TAMBAH INI
+  },
+});
       await fetchReports();
       setFormData({
         name: "",
@@ -96,7 +97,9 @@ const HRLaporan = () => {
     if (!window.confirm("Hapus laporan ini?")) return;
 
     try {
-      await axios.delete(`http://localhost:8000/api/reports/${id}`);
+      await axios.delete(`${import.meta.env.VITE_API_URL}/reports/${id}`, {
+  headers: { "ngrok-skip-browser-warning": "69420" }
+});
       fetchReports();
       showNotification("success", "Laporan berhasil dihapus");
     } catch (error) {

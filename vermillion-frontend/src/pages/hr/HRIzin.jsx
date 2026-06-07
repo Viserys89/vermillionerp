@@ -30,25 +30,24 @@ const HRIzin = () => {
     setTimeout(() => setNotification(null), 4000);
   };
 
-  const fetchLeaves = async () => {
+const fetchLeaves = async () => {
     try {
       const token = localStorage.getItem('token');
-
       const response = await axios.get(`${API_URL}/leaves`, {
         headers: {
           Authorization: `Bearer ${token}`,
-          Accept: 'application/json'
+          Accept: 'application/json',
+          "ngrok-skip-browser-warning": "69420"
         }
       });
-
       setLeaves(response.data);
     } catch (error) {
       console.error('Gagal mengambil data izin:', error);
-
-      showNotification(
-        'error',
-        'Gagal mengambil data pengajuan izin'
-      );
+      
+      setTimeout(() => {
+        showNotification('error', 'Gagal mengambil data pengajuan izin');
+      }, 0);
+      
     } finally {
       setLoading(false);
     }
