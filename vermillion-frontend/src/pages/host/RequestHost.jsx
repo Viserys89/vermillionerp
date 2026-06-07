@@ -27,7 +27,7 @@ const RequestHost = () => {
   const fetchFacilities = async () => {
     try {
       const response = await axios.get(
-        'http://localhost:8000/api/facilities'
+      `${import.meta.env.VITE_API_URL}/facilities`
       );
 
       setFacilities(response.data);

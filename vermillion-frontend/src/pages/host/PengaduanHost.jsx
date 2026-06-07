@@ -3,7 +3,7 @@ import axios from 'axios';
 import { Search, Plus, Upload, Edit, Trash2, Eye, X, CheckCircle, FileText, FileImage } from 'lucide-react';
 import ConfirmationModal from '../../components/common/ConfirmationModal';
 
-const API_URL = "http://localhost:8000/api";
+const API_URL = `${import.meta.env.VITE_API_URL}`;
 
 const PengaduanHost = () => {
   const [view, setView] = useState('list'); // 'list' atau 'editor'
@@ -58,7 +58,7 @@ useEffect(() => {
   // State untuk Editor
   const [editorTitle, setEditorTitle] = useState('');
   const [editorContent, setEditorContent] = useState('');
-  const [isSimulatingUpload, setIsSimulatingUpload] = useState(false);
+  // const [isSimulatingUpload, setIsSimulatingUpload] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
   const [currentEditId, setCurrentEditId] = useState(null);
 
