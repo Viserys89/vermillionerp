@@ -9,6 +9,8 @@ import ContactRole from "./pages/ContactRole";
 import BerandaHost from "./pages/host/BerandaHost";
 import LaporanHost from "./pages/host/LaporanHost";
 import IzinHost from "./pages/host/IzinHost";
+import PengaduanHost from "./pages/host/PengaduanHost";
+import RequestHost from "./pages/host/RequestHost";
 // HR
 import HRDashboard from './pages/hr/HRDashboard';
 import HRKaryawan from './pages/hr/HRKaryawan';
@@ -48,6 +50,8 @@ function App() {
           <Route path="profile" element={<ProfilePage />} />
           <Route path="contact" element={<ContactRole />} />
           <Route path="izin" element={<IzinHost />} />
+          <Route path="pengaduan" element={<PengaduanHost />} />
+          <Route path="request" element={<RequestHost />} />
         </Route>
         
          {/* Dashboard Role: Finance */}

@@ -64,12 +64,12 @@ const MainLayout = () => {
     {
       name: "Pengaduan",
       icon: <Megaphone size={20} />,
-      path: "",
+      path: "/dashboard-host/pengaduan",
     },
     {
       name: "Request",
       icon: <PenTool size={20} />,
-      path: "",
+      path: "/dashboard-host/request",
     },
     {
       name: "Contact",
