@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   Download,
   FileText,
@@ -34,7 +34,7 @@ const HRLaporan = () => {
     file: null,
   });
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const fetchReports = async () => {
+  const fetchReports = useCallback(async () => {
     try {
       const response = await axios.get("http://localhost:8000/api/reports");
 
@@ -42,12 +42,16 @@ const HRLaporan = () => {
     } catch (error) {
       console.error(error);
     }
-  };
+  }, []);
 
   useEffect(() => {
-    fetchReports();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    const loadData = async () => {
+      await fetchReports();
+    };
+
+    loadData();
+  }, [fetchReports]);
+
   const filteredReports = reports.filter((r) =>
     (r.name || "").toLowerCase().includes(searchTerm.toLowerCase()),
   );
@@ -73,6 +77,14 @@ const HRLaporan = () => {
           "Content-Type": "multipart/form-data",
         },
       });
+      await fetchReports();
+      setFormData({
+        name: "",
+        report_date: "",
+        type: "PDF",
+        file: null,
+      });
+
       setIsModalOpen(false);
 
       showNotification("success", "Laporan berhasil ditambahkan");
@@ -85,30 +97,20 @@ const HRLaporan = () => {
 
     try {
       await axios.delete(`http://localhost:8000/api/reports/${id}`);
-
       fetchReports();
-
       showNotification("success", "Laporan berhasil dihapus");
     } catch (error) {
       console.error(error);
     }
   };
   const handleDownload = (report) => {
-    // 1. Buat elemen link (a) secara virtual di background
     const link = document.createElement("a");
     link.href = `http://localhost:8000/storage/${report.file_path}`;
-
-    // 2. Paksa browser untuk mengunduh, bukan membuka file di tab baru
-    // Kita gunakan nama laporan asli untuk nama file unduhannya
     link.setAttribute("download", report.name);
-    link.target = "_blank"; // Sebagai fallback jika browser tetap ingin membukanya
-
-    // 3. Eksekusi klik pada link bayangan tersebut lalu hapus lagi
+    link.target = "_blank";
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-
-    // 4. Munculkan notifikasi sukses
     showNotification("success", `Dokumen "${report.name}" berhasil diunduh!`);
   };
 
@@ -244,7 +246,7 @@ const HRLaporan = () => {
                       </p>
                     </td>
                     <td className="px-4 py-3 text-gray-600 hidden sm:table-cell">
-                     {report.report_date}
+                      {report.report_date}
                     </td>
                     <td className="px-4 py-3 text-center hidden md:table-cell">
                       <span

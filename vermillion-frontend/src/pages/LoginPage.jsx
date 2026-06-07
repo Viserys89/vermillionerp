@@ -13,10 +13,18 @@ const LoginPage = () => {
     e.preventDefault();
 
     try {
-      const response = await axios.post("http://localhost:8000/api/login", {
-        email,
-        password,
-      });
+      const response = await axios.post(
+       `${import.meta.env.VITE_API_URL}/login`,
+        {
+          email,
+          password,
+        },
+        {
+          headers: {
+            "ngrok-skip-browser-warning": "69420",
+          },
+        },
+      );
       console.log("LOGIN RESPONSE:", response.data);
       const user = response.data.user;
       console.log("ROLE:", user.role);
@@ -52,14 +60,13 @@ const LoginPage = () => {
           alert("Role tidak dikenali");
       }
     } catch (error) {
-  console.error("LOGIN ERROR:", error);
+      console.error("LOGIN ERROR:", error);
 
-  const message =
-    error.response?.data?.message ||
-    "Terjadi kesalahan saat login";
+      const message =
+        error.response?.data?.message || "Terjadi kesalahan saat login";
 
-  alert(message);
-}
+      alert(message);
+    }
   };
 
   return (

@@ -6,7 +6,8 @@ return [
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => [
+'allowed_origins' => [
+        'https://vermillionerp.vercel.app',
         'http://localhost:5173',
     ],
 
