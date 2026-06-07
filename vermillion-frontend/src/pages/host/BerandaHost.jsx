@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Users, Diamond, Award, Megaphone, Send } from 'lucide-react';
+import { API_BASE_URL } from '../../api';
 
 const BerandaHost = () => {
   const user = JSON.parse(localStorage.getItem("user")) || { id: 1, name: 'Guest' };
@@ -12,7 +13,7 @@ const BerandaHost = () => {
   });
 
   useEffect(() => {
-    fetch(`http://127.0.0.1:8000/api/host/${user.id}/dashboard`)
+    fetch(`${API_BASE_URL}/host/${user.id}/dashboard`)
       .then(res => res.json())
       .then(result => {
         if (!result.message) {

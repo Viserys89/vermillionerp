@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Users, Diamond, SortAsc, Clock, CheckCircle, XCircle, Download, Eye, X } from 'lucide-react';
+import { API_BASE_URL } from '../../api';
 
 const BerandaFinance = () => {
   const [dashboardData, setDashboardData] = useState({
@@ -16,7 +17,7 @@ const BerandaFinance = () => {
 
   const fetchDashboard = () => {
     const query = new URLSearchParams(filters).toString();
-    fetch(`http://127.0.0.1:8000/api/finance/dashboard?${query}`)
+    fetch(`${API_BASE_URL}/finance/dashboard?${query}`)
       .then(res => res.json())
       .then(data => {
         if (!data.message) {
@@ -31,7 +32,7 @@ const BerandaFinance = () => {
   }, [filters]);
 
   const handleStatusUpdate = (id, status) => {
-    fetch(`http://127.0.0.1:8000/api/finance/reports/${id}/status`, {
+    fetch(`${API_BASE_URL}/finance/reports/${id}/status`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json'
@@ -201,7 +202,7 @@ const BerandaFinance = () => {
             <h3 className="text-lg font-bold mb-6">Bukti Screenshot Laporan</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {selectedImages.map((img, idx) => (
-                <img key={idx} src={`http://127.0.0.1:8000/storage/${img.image_path}`} alt="bukti" className="w-full rounded-xl border border-gray-200" />
+                <img key={idx} src={`${API_BASE_URL.replace('/api', '')}/storage/${img.image_path}`} alt="bukti" className="w-full rounded-xl border border-gray-200" />
               ))}
               {selectedImages.length === 0 && <p className="text-gray-500 italic">Tidak ada gambar bukti.</p>}
             </div>

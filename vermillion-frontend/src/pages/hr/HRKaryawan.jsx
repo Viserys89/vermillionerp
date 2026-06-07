@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { API_BASE_URL } from "../../api";
 import {
   Search,
   Eye,
@@ -33,7 +34,7 @@ const HRKaryawan = () => {
   useEffect(() => {
     const fetchEmployees = async () => {
       try {
-        const response = await axios.get("http://localhost:8000/api/employees");
+        const response = await axios.get(`${API_BASE_URL}/employees`);
         setEmployees(response.data);
         setLoading(false);
       } catch (err) {

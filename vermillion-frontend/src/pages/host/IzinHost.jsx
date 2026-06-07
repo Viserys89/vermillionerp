@@ -1,6 +1,7 @@
 /* eslint-disable react-hooks/set-state-in-effect */
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { API_BASE_URL } from "../../api";
 import {
   Plus,
   CheckCircle,
@@ -10,7 +11,7 @@ import {
   X
 } from "lucide-react";
 
-const API_URL = "http://localhost:8000/api";
+const API_URL = API_BASE_URL;
 
 const IzinHost = () => {
   const [isModalOpen, setModalOpen] = useState(false);

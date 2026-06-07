@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import * as XLSX from "xlsx";
 import axios from "axios";
+import { API_BASE_URL } from "../../api";
 import {
   Search,
   Plus,
@@ -65,7 +66,7 @@ const HRDashboard = () => {
     const fetchEmployees = async () => {
       try {
         const response = await axios.get(
-          `http://127.0.0.1:8000/api/employees`,
+          `${API_BASE_URL}/employees`,
           {
             headers: {
               "ngrok-skip-browser-warning": "69420",
@@ -145,7 +146,7 @@ const HRDashboard = () => {
       if (selectedEmployee) {
         // PROSES EDIT DATA (PUT)
         const response = await axios.put(
-          `http://localhost:8000/api/employees/${selectedEmployee.id}`,
+          `${API_BASE_URL}/employees/${selectedEmployee.id}`,
           payload,
         );
 
@@ -162,7 +163,7 @@ const HRDashboard = () => {
       } else {
         // PROSES TAMBAH DATA (POST)
         const response = await axios.post(
-          "http://localhost:8000/api/employees",
+          `${API_BASE_URL}/employees`,
           payload,
         );
 
@@ -188,7 +189,7 @@ const HRDashboard = () => {
       try {
         // PROSES HAPUS DATA (DELETE)
         await axios.delete(
-          `http://localhost:8000/api/employees/${employeeToDelete.id}`,
+          `${API_BASE_URL}/employees/${employeeToDelete.id}`,
         );
 
         setEmployees(employees.filter((emp) => emp.id !== employeeToDelete.id));
@@ -353,7 +354,7 @@ const HRDashboard = () => {
           console.log("Importing row:", payload); // untuk debug
 
           try {
-            await axios.post("http://localhost:8000/api/employees", payload);
+            await axios.post(`${API_BASE_URL}/employees`, payload);
             successCount++;
           } catch (apiError) {
             console.log("ERROR:", apiError.response?.data);
@@ -363,7 +364,7 @@ const HRDashboard = () => {
         }
 
         const response = await axios.get(
-          "http://127.0.0.1:8000/api/employees",
+          `${API_BASE_URL}/employees`,
           {
             headers: { "ngrok-skip-browser-warning": "69420" },
           },

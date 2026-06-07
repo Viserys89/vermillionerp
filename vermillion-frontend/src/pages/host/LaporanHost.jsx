@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { CheckCircle, X, Gem, Clock } from 'lucide-react';
+import { API_BASE_URL } from '../../api';
 
 const LaporanHost = () => {
   const user = JSON.parse(localStorage.getItem("user")) || { id: 1 };
@@ -15,7 +16,7 @@ const LaporanHost = () => {
   });
 
   const fetchReports = () => {
-    fetch(`http://127.0.0.1:8000/api/host/${user.id}/reports`, {
+    fetch(`${API_BASE_URL}/host/${user.id}/reports`, {
       headers: {
             'Accept': 'application/json', // <--- INI PENTING
             'Content-Type': 'application/json'
@@ -57,7 +58,7 @@ const LaporanHost = () => {
       data.append(`images[${index}]`, file);
     });
 
-    fetch(`http://127.0.0.1:8000/api/host/${user.id}/reports`, {
+    fetch(`${API_BASE_URL}/host/${user.id}/reports`, {
       method: 'POST',
       body: data
     })

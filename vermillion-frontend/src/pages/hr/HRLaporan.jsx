@@ -12,6 +12,7 @@ import {
   Trash2,
 } from "lucide-react";
 import axios from "axios";
+import { API_BASE_URL } from "../../api";
 
 const HRLaporan = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -36,7 +37,7 @@ const HRLaporan = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const fetchReports = useCallback(async () => {
     try {
-      const response = await axios.get("http://localhost:8000/api/reports");
+      const response = await axios.get(`${API_BASE_URL}/reports`);
 
       setReports(response.data);
     } catch (error) {
@@ -72,7 +73,7 @@ const HRLaporan = () => {
       data.append("type", formData.type);
       data.append("file", formData.file);
 
-      await axios.post("http://localhost:8000/api/reports", data, {
+      await axios.post(`${API_BASE_URL}/reports`, data, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
@@ -96,7 +97,7 @@ const HRLaporan = () => {
     if (!window.confirm("Hapus laporan ini?")) return;
 
     try {
-      await axios.delete(`http://localhost:8000/api/reports/${id}`);
+      await axios.delete(`${API_BASE_URL}/reports/${id}`);
       fetchReports();
       showNotification("success", "Laporan berhasil dihapus");
     } catch (error) {
@@ -105,7 +106,8 @@ const HRLaporan = () => {
   };
   const handleDownload = (report) => {
     const link = document.createElement("a");
-    link.href = `http://localhost:8000/storage/${report.file_path}`;
+    const storageUrl = API_BASE_URL.replace('/api', '') + '/storage';
+    link.href = `${storageUrl}/${report.file_path}`;
     link.setAttribute("download", report.name);
     link.target = "_blank";
     document.body.appendChild(link);

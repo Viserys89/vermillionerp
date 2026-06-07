@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Search, Plus, Upload, Edit, Trash2, Eye, X, CheckCircle, FileText, FileImage } from 'lucide-react';
+import { API_BASE_URL } from '../../api';
 import ConfirmationModal from '../../components/common/ConfirmationModal';
 
-const API_URL = `http://127.0.0.1:8000/api`;
+const API_URL = API_BASE_URL;
 
 const PengaduanHost = () => {
   const [view, setView] = useState('list'); // 'list' atau 'editor'

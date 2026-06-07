@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Plus,X,CheckCircle, Send } from 'lucide-react';
+import { API_BASE_URL } from '../../api';
 
 const RequestHost = () => {
   const [setFacilities] = useState([]);
@@ -26,7 +27,7 @@ const RequestHost = () => {
   const fetchFacilities = async () => {
     try {
       const response = await axios.get(
-             "http://127.0.0.1:8000/api/facilities"
+             `${API_BASE_URL}/facilities`
 
       );
 
@@ -58,7 +59,7 @@ const RequestHost = () => {
 
   try {
     await axios.post(
-      'http://localhost:8000/api/facility-requests',
+      `${API_BASE_URL}/facility-requests`,
       {
         user_id: user.id,
         nama_barang: formData.nama_barang,
@@ -89,7 +90,7 @@ const RequestHost = () => {
     const fetchFacilityRequests = async () => {
     try {
         const response = await axios.get(
-        `http://localhost:8000/api/facility-requests/user/${user.id}`
+        `${API_BASE_URL}/facility-requests/user/${user.id}`
         );
 
         setFacilityRequests(response.data);
@@ -110,7 +111,7 @@ const RequestHost = () => {
 
     try {
         await axios.delete(
-        `http://localhost:8000/api/facility-requests/${id}`
+        `${API_BASE_URL}/facility-requests/${id}`
         );
 
         fetchFacilityRequests();

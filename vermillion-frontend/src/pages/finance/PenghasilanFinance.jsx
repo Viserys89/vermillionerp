@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Users, Wallet, SortAsc, ChevronLeft, ChevronRight, Calendar } from 'lucide-react';
+import { API_BASE_URL } from '../../api';
 
 const PenghasilanFinance = () => {
   const [incomes, setIncomes] = useState([]);
@@ -18,7 +19,7 @@ const PenghasilanFinance = () => {
       search: searchTerm
     }).toString();
     
-    fetch(`http://127.0.0.1:8000/api/finance/income?${query}`)
+    fetch(`${API_BASE_URL}/finance/income?${query}`)
       .then(res => res.json())
       .then(data => {
         if (Array.isArray(data)) {

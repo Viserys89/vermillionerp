@@ -3,6 +3,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { Mail, Lock } from "lucide-react";
 import logoVermillion from "../assets/logovermiloren.png";
 import axios from "axios";
+import { API_BASE_URL } from "../api";
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");
@@ -14,7 +15,7 @@ const LoginPage = () => {
 
     try {
       const response = await axios.post(
-       "http://127.0.0.1:8000/api/login",
+        `${API_BASE_URL}/login`,
         {
           email,
           password,

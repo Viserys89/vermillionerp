@@ -8,6 +8,7 @@ import {
   Briefcase,
 } from "lucide-react";
 import axios from "axios";
+import { API_BASE_URL } from "../api";
 
 const ContactRole = () => {
   const [contactData, setContactData] = useState([]);
@@ -20,7 +21,7 @@ const ContactRole = () => {
     const fetchContacts = async () => {
       try {
         const response = await axios.get(
-                 "http://127.0.0.1:8000/api/employees",
+          `${API_BASE_URL}/employees`,
           { headers: { "ngrok-skip-browser-warning": "69420" } },
         );
 

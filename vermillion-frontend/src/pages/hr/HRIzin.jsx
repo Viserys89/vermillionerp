@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { API_BASE_URL } from '../../api';
 import {
   CheckCircle,
   X,
@@ -8,8 +9,6 @@ import {
   ChevronLeft,
   ChevronRight
 } from 'lucide-react';
-
-const API_URL = 'http://localhost:8000/api';
 
 const HRIzin = () => {
   const [leaves, setLeaves] = useState([]);
@@ -34,7 +33,7 @@ const HRIzin = () => {
     try {
       const token = localStorage.getItem('token');
 
-      const response = await axios.get(`${API_URL}/leaves`, {
+      const response = await axios.get(`${API_BASE_URL}/leaves`, {
         headers: {
           Authorization: `Bearer ${token}`,
           Accept: 'application/json'
@@ -82,7 +81,7 @@ const HRIzin = () => {
           : 'Rejected';
 
       await axios.put(
-        `${API_URL}/leaves/${selectedLeave.id}/status`,
+        `${API_BASE_URL}/leaves/${selectedLeave.id}/status`,
         {
           status: newStatus
         },
