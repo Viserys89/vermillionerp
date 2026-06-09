@@ -58,7 +58,7 @@ class HostController extends Controller
             'report_date' => 'required|date',
             'shift_schedule' => 'required|string',
             'diamond_earned' => 'required|numeric',
-            'images.*' => 'required|image|max:2048',
+            'images.*' => 'required|image|max:10240',
         ]);
 
         DB::beginTransaction();

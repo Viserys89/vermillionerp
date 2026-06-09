@@ -1,10 +1,17 @@
 FROM php:8.2-cli
 
-# Install ekstensi sistem yang dibutuhkan Laravel
-RUN apt-get update -y && apt-get install -y libmcrypt-dev git unzip libpq-dev libmariadb-dev
+# Install ekstensi sistem + library untuk memproses gambar JPEG/PNG
+RUN apt-get update -y && apt-get install -y \
+    libmcrypt-dev git unzip libpq-dev libmariadb-dev \
+    libpng-dev libjpeg-dev libfreetype6-dev
 
-# Install ekstensi PHP untuk MySQL
-RUN docker-php-ext-install pdo pdo_mysql
+# Install ekstensi PHP (PDO dan GD untuk gambar)
+RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install gd pdo pdo_mysql
+
+# Naikkan limit ukuran file upload PHP menjadi 50MB
+RUN echo "upload_max_filesize = 50M" > /usr/local/etc/php/conf.d/uploads.ini \
+    && echo "post_max_size = 50M" >> /usr/local/etc/php/conf.d/uploads.ini
 
 # Install Composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
