@@ -26,5 +26,11 @@ RUN composer install --optimize-autoloader --no-dev
 # Beri izin pada folder storage
 RUN chmod -R 777 storage bootstrap/cache
 
+# ==========================================
+# TAMBAHAN BARU: Buat jalan pintas (symlink) 
+# agar folder storage bisa diakses dari web (Mencegah 404)
+# ==========================================
+RUN php artisan storage:link
+
 # Perintah untuk menjalankan server
 CMD php artisan serve --host=0.0.0.0 --port=$PORT
