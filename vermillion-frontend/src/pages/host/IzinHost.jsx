@@ -59,7 +59,8 @@ const IzinHost = () => {
       await axios.post(`${API_URL}/leaves`, {
         employee_id: employeeId,
         leave_type: formData.leave_type,
-        date_range: formData.date_range,
+        start_date: formData.start_date,
+        end_date: formData.end_date,
         reason: formData.reason
       });
 
@@ -68,7 +69,8 @@ const IzinHost = () => {
 
       setFormData({
         leave_type: "",
-        date_range: "",
+        start_date: "",
+        end_date: "",
         reason: ""
       });
 
