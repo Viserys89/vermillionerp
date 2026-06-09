@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Users, Diamond, SortAsc, Clock, CheckCircle, XCircle, Download, Eye, X } from 'lucide-react';
+import { Users, Diamond, SortAsc, Clock, CheckCircle, XCircle, Download, Eye, X, Search } from 'lucide-react';
 import { API_BASE_URL } from '../../api';
 
 const BerandaFinance = () => {
@@ -47,51 +47,56 @@ const BerandaFinance = () => {
   };
 
   return (
-    <div className="animate-fade-in relative">
-      <h1 className="text-xl font-medium mb-1">
-        Finance Dashboard
-      </h1>
-      <h1 className='mb-6 text-gray-500'>Verifikasi dan kelola pendapatan host dengan filter dan export data</h1>
+    <div className="animate-fade-in space-y-4">
+      {/* Header Title */}
+      <div>
+        <h1 className="text-2xl md:text-3xl font-bold text-text-primary">
+          Finance Dashboard
+        </h1>
+        <p className="text-sm md:text-base text-text-secondary mt-1">
+          Verifikasi dan kelola pendapatan host dengan filter dan export data
+        </p>
+      </div>
       
-      <div className="flex items-center gap-6 mb-6 flex-wrap">
-        <div className="bg-[#fffef0] border-2 border-[#fde8d8] p-6 rounded-xl flex items-center gap-5 min-w-[300px] min-h-[120px]">
-          <div className="flex flex-row gap-6">
-            <Diamond size={32} className="text-orange-500 size-auto" />
-            <div>
-              <p className="text-sm text-gray-500 flex items-center gap-2">
-                TOTAL DIAMOND (DISETUJUI)
-              </p>
-              <h2 className="text-2xl font-bold text-orange-500">
-                {Number(dashboardData.total_diamonds).toLocaleString('id-ID')}
-              </h2>
-            </div>
+      {/* Stats Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
+        <div className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow p-4 md:p-6 md:col-span-2 flex items-center gap-4">
+          <div className="p-3 bg-orange-100 rounded-full">
+            <Diamond size={28} className="text-brand-orange" />
+          </div>
+          <div>
+            <p className="text-xs md:text-sm text-text-secondary truncate">
+              TOTAL DIAMOND (DISETUJUI)
+            </p>
+            <p className="text-2xl md:text-3xl font-bold text-brand-orange mt-1">
+              {Number(dashboardData.total_diamonds).toLocaleString('id-ID')}
+            </p>
           </div>
         </div>
-
-        <button className="ml-auto bg-gradient-to-r from-orange-400 to-orange-500 text-white px-6 py-3 rounded-xl flex items-center gap-2 shadow hover:opacity-90 transition">
-          <Download size={16} className="text-white size-auto" />
-          Export CSV
-        </button>
       </div>
     
-      <div className="bg-white shadow rounded-2xl p-6">
-        <h2 className="text-sm font-semibold mb-3 flex items-center gap-2">
-          <SortAsc size={20} className="text-orange-500" /> Filter Data
-        </h2>
+      {/* Main Content Card */}
+      <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 md:p-6 space-y-4">
+        {/* Action Buttons */}
+        <div className="flex flex-col sm:flex-row gap-2 justify-end mb-4">
+          <button className="flex items-center justify-center gap-2 px-4 py-2 bg-status-success text-white text-sm md:text-base rounded-lg hover:bg-emerald-700 focus:ring-2 focus:ring-green-300 focus:outline-none transition-all font-medium">
+            <Download size={18} /> Export CSV
+          </button>
+        </div>
 
-        <div className="mb-3">
+        {/* Filters */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-2">
           <input
             type="date"
             value={filters.date}
             onChange={(e) => setFilters({...filters, date: e.target.value})}
-            className="border rounded-lg px-3 py-2 text-sm shadow-sm bg-white focus:border-orange-500 focus:outline-none"/>
-        </div>
+            className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-brand-orange focus:border-transparent transition-all text-sm bg-white"
+          />
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-3">
           <select 
             value={filters.shift}
             onChange={(e) => setFilters({...filters, shift: e.target.value})}
-            className="border rounded-lg px-3 py-2 text-sm bg-white focus:border-orange-500 focus:outline-none"
+            className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-brand-orange focus:border-transparent transition-all text-sm bg-white"
           >
             <option>Pilih Shift</option>
             <option>06.00 - 12.00</option>
@@ -99,112 +104,139 @@ const BerandaFinance = () => {
             <option>18.00 - 00.00</option>
           </select>
 
-          <select className="border rounded-lg px-3 py-2 text-sm bg-white focus:border-orange-500 focus:outline-none">
+          <select className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-brand-orange focus:border-transparent transition-all text-sm bg-white">
             <option>Pilih Tim</option>
           </select>
 
           <select 
             value={filters.status}
             onChange={(e) => setFilters({...filters, status: e.target.value})}
-            className="border rounded-lg px-3 py-2 text-sm bg-white focus:border-orange-500 focus:outline-none"
+            className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-brand-orange focus:border-transparent transition-all text-sm bg-white"
           >
             <option>Pilih Status</option>
             <option>Menunggu</option>
             <option>Disetujui</option>
             <option>Ditolak</option>
           </select>
+
+          <div className="relative w-full">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" size={18} />
+            <input
+              type="text"
+              placeholder="Cari Nama Host"
+              value={filters.search}
+              onChange={(e) => setFilters({...filters, search: e.target.value})}
+              className="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-brand-orange focus:border-transparent transition-all text-sm bg-white"
+            />
+          </div>
         </div>
 
-        <input
-          type="text"
-          placeholder="Cari Nama Host"
-          value={filters.search}
-          onChange={(e) => setFilters({...filters, search: e.target.value})}
-          className="w-full border rounded-lg px-3 py-2 text-sm bg-white focus:border-orange-500 focus:outline-none"/>
+        {/* Table */}
+        <div className="overflow-x-auto -mx-4 md:mx-0 pt-2">
+          <table className="w-full text-xs md:text-sm">
+            <thead>
+              <tr className="border-b border-gray-200">
+                <th className="px-4 py-3 text-left font-bold text-text-primary">Host & Tim</th>
+                <th className="px-4 py-3 text-left font-bold text-text-primary">Shift & Tanggal</th>
+                <th className="px-4 py-3 text-left font-bold text-text-primary">Total Diamond</th>
+                <th className="px-4 py-3 text-left font-bold text-text-primary">Status</th>
+                <th className="px-4 py-3 text-left font-bold text-text-primary">Bukti</th>
+                <th className="px-4 py-3 text-left font-bold text-text-primary">Verifikasi</th>
+              </tr>
+            </thead>
+            <tbody>
+              {dashboardData.reports.map((report) => (
+                <tr key={report.id} className="border-b border-gray-100 hover:bg-light-bg/50 transition-colors">
+                  <td className="px-4 py-3 font-medium">
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 md:w-10 md:h-10 bg-gray-100 rounded-full flex items-center justify-center shrink-0">
+                        <Users size={18} className="text-gray-500" />
+                      </div>
+                      <div>
+                        <div className="text-text-primary font-bold">{report.host?.name || 'Unknown'}</div>
+                        <div className="text-xs text-text-secondary">{report.host?.host_profile?.team || '-'}</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td className="px-4 py-3 text-text-secondary">
+                    <div className="font-medium text-text-primary">{report.shift_schedule}</div>
+                    <div className="text-xs">{report.report_date}</div>
+                  </td>
+                  <td className="px-4 py-3 font-bold text-brand-orange">
+                    {Number(report.diamond_earned).toLocaleString('id-ID')}
+                  </td>
+                  <td className="px-4 py-3">
+                    <span className={`px-3 py-1 rounded-full text-xs font-bold whitespace-nowrap inline-flex items-center gap-1 ${
+                      report.status === 'Disetujui' ? 'bg-green-100 text-status-success' :
+                      report.status === 'Ditolak' ? 'bg-red-100 text-status-error' :
+                      'bg-yellow-100 text-status-warning'
+                    }`}>
+                      {report.status === 'Disetujui' && <CheckCircle size={14} />}
+                      {report.status === 'Ditolak' && <XCircle size={14} />}
+                      {report.status === 'Menunggu' && <Clock size={14} />}
+                      {report.status}
+                    </span>
+                  </td>
+                  <td className="px-4 py-3">
+                    <button 
+                      onClick={() => setSelectedImages(report.evidences)}
+                      className="text-blue-600 flex items-center gap-1 hover:text-blue-800 transition-colors text-xs md:text-sm font-medium"
+                    >
+                      <Eye size={16} /> Lihat ({report.evidences?.length || 0})
+                    </button>
+                  </td>
+                  <td className="px-4 py-3">
+                    <div className="flex gap-2">
+                      {report.status === 'Menunggu' || report.status === 'Diperiksa' ? (
+                        <>
+                          <button 
+                            onClick={() => handleStatusUpdate(report.id, 'Disetujui')} 
+                            className="px-3 py-1.5 bg-green-50 text-status-success rounded-lg hover:bg-green-100 transition-all text-xs md:text-sm font-medium"
+                          >
+                            Terima
+                          </button>
+                          <button 
+                            onClick={() => handleStatusUpdate(report.id, 'Ditolak')} 
+                            className="px-3 py-1.5 bg-red-50 text-status-error rounded-lg hover:bg-red-100 transition-all text-xs md:text-sm font-medium"
+                          >
+                            Tolak
+                          </button>
+                        </>
+                      ) : (
+                        <span className="text-text-secondary text-xs italic px-2">Selesai</span>
+                      )}
+                    </div>
+                  </td>
+                </tr>
+              ))}
+              {dashboardData.reports.length === 0 && (
+                <tr>
+                  <td colSpan="6" className="text-center py-8 text-gray-500 text-sm md:text-base">
+                    Belum ada laporan.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
 
-      <div className="w-full border rounded-xl overflow-x-auto mt-6 bg-white">
-        <div className="grid grid-cols-6 min-w-[900px] bg-[#fffef0] text-black text-sm font-semibold px-6 py-4">
-            <div>HOST & TIM</div>
-            <div>SHIFT & TANGGAL</div>
-            <div>TOTAL DIAMOND</div>
-            <div>STATUS</div>
-            <div>BUKTI</div>
-            <div>VERIFIKASI</div>
-        </div>
-
-        <div className="flex flex-col">
-          {dashboardData.reports.map((report) => (
-            <div key={report.id} className="grid grid-cols-6 min-w-[900px] items-center px-6 py-4 border-t">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center">
-                    <Users size={20} className="text-gray-600" />
-                </div>
-                <div>
-                    <p className="font-medium">{report.host?.name || 'Unknown'}</p>
-                    <p className="text-xs text-gray-400">{report.host?.host_profile?.team || '-'}</p>
-                </div>
-              </div>
-
-              <div>
-                <p className="text-sm text-gray-700 font-medium">{report.shift_schedule}</p>
-                <p className="text-xs text-gray-400">{report.report_date}</p>
-              </div>
-
-              <div className="text-orange-500 font-semibold">
-                {Number(report.diamond_earned).toLocaleString('id-ID')}
-              </div>
-
-              <div>
-                <span className={`px-3 py-1 rounded-lg text-sm flex items-center gap-2 w-fit ${
-                  report.status === 'Disetujui' ? 'bg-green-100 text-green-700' :
-                  report.status === 'Ditolak' ? 'bg-red-100 text-red-700' :
-                  'bg-yellow-100 text-yellow-700'
-                }`}>
-                    {report.status === 'Disetujui' && <CheckCircle size={16} />}
-                    {report.status === 'Ditolak' && <XCircle size={16} />}
-                    {report.status === 'Menunggu' && <Clock size={16} />}
-                    {report.status}
-                </span>
-              </div>
-
-              <div>
-                <button 
-                  onClick={() => setSelectedImages(report.evidences)}
-                  className="text-blue-500 flex items-center gap-1 hover:underline text-sm"
-                >
-                  <Eye size={16} /> Lihat ({report.evidences?.length || 0})
-                </button>
-              </div>
-
-              <div className="flex items-center gap-2">
-                {report.status === 'Menunggu' || report.status === 'Diperiksa' ? (
-                  <>
-                    <button onClick={() => handleStatusUpdate(report.id, 'Disetujui')} className="text-white bg-green-500 hover:bg-green-600 px-3 py-1.5 rounded-lg text-xs font-semibold shadow-sm transition">Terima</button>
-                    <button onClick={() => handleStatusUpdate(report.id, 'Ditolak')} className="text-white bg-red-500 hover:bg-red-600 px-3 py-1.5 rounded-lg text-xs font-semibold shadow-sm transition">Tolak</button>
-                  </>
-                ) : (
-                  <span className="text-gray-400 text-sm italic">Selesai</span>
-                )}
-              </div>
-            </div>
-          ))}
-          {dashboardData.reports.length === 0 && (
-            <p className="text-center text-gray-500 py-6">Belum ada laporan.</p>
-          )}
-        </div>
-      </div>
-
+      {/* Image Modal */}
       {selectedImages && (
-        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-          <div className="bg-white p-6 rounded-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto relative shadow-2xl">
-            <button onClick={() => setSelectedImages(null)} className="absolute right-4 top-4 p-2 hover:bg-gray-100 rounded-full transition"><X /></button>
-            <h3 className="text-lg font-bold mb-6">Bukti Screenshot Laporan</h3>
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-fade-in">
+          <div className="bg-white rounded-2xl shadow-xl w-full max-w-4xl max-h-[90vh] overflow-y-auto p-6 relative animate-slide-up">
+            <button 
+              onClick={() => setSelectedImages(null)} 
+              className="absolute right-4 top-4 text-text-secondary hover:text-status-error transition-colors"
+            >
+              <X size={24} />
+            </button>
+            <h3 className="text-lg md:text-xl font-bold text-text-primary mb-6">Bukti Screenshot Laporan</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {selectedImages.map((img, idx) => (
-                <img key={idx} src={`${API_BASE_URL.replace('/api', '')}/storage/${img.image_path}`} alt="bukti" className="w-full rounded-xl border border-gray-200" />
+                <img key={idx} src={`${API_BASE_URL.replace('/api', '')}/storage/${img.image_path}`} alt="bukti" className="w-full rounded-xl border border-gray-200 shadow-sm" />
               ))}
-              {selectedImages.length === 0 && <p className="text-gray-500 italic">Tidak ada gambar bukti.</p>}
+              {selectedImages.length === 0 && <p className="text-gray-500 text-sm italic col-span-2">Tidak ada gambar bukti.</p>}
             </div>
           </div>
         </div>
