@@ -147,9 +147,16 @@ const LaporanHost = () => {
 
               <div className="flex flex-col gap-2">
                 <label className="text-sm font-bold">Bukti Screenshot <span className="text-xs font-normal text-gray-500">(Maks 5)</span></label>
-                <input type="file" multiple required onChange={handleFileChange} className="text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-orange-50 file:text-orange-700 hover:file:bg-orange-100 cursor-pointer" />
+                <input 
+                  type="file" 
+                  multiple 
+                  required 
+                  accept="image/*"
+                  onChange={handleFileChange} 
+                  className="text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-orange-50 file:text-orange-700 hover:file:bg-orange-100 cursor-pointer" 
+                />
                 <p className={`text-[10px] ${fileCount > 0 ? 'text-green-600' : 'text-gray-500'}`}>
-                  {fileCount > 0 ? `${fileCount} foto terpilih` : 'Format: JPG, PNG'}
+                  {fileCount > 0 ? `${fileCount} foto terpilih` : 'Format: Semua Tipe Gambar (JPG, PNG, dll)'}
                 </p>
               </div>
 
