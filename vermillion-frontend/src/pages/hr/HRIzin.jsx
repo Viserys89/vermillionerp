@@ -323,7 +323,7 @@ const HRIzin = () => {
                   </td>
 
                   <td className="px-4 py-3">
-                    {leave.date_range}
+                    {leave.start_date} s/d {leave.end_date}
                   </td>
 
                   <td className="px-4 py-3">
@@ -427,7 +427,7 @@ const HRIzin = () => {
 
             <p className="text-center text-gray-500 mb-6">
               {selectedLeave.leave_type} •{' '}
-              {selectedLeave.date_range}
+              {selectedLeave.start_date} s/d {selectedLeave.end_date}
             </p>
 
             <div className="flex gap-2">

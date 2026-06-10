@@ -11,7 +11,8 @@ class Leave extends Model
     protected $fillable = [
         'employee_id', 
         'leave_type', 
-        'date_range', 
+        'start_date', 
+        'end_date', 
         'reason', 
         'status'
     ];
