@@ -12,8 +12,6 @@ const PengaduanHost = () => {
   // form pengaduan
   const [modules, setModules] = useState([]);
   const [loading, setLoading] = useState(true);
-
-  // STATE BARU: Pemicu untuk me-refresh data tabel
   const [refreshKey, setRefreshKey] = useState(0);
 
   // ambil user

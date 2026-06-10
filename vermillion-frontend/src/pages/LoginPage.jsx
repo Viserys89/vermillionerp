@@ -19,11 +19,6 @@ const LoginPage = () => {
           email,
           password,
         },
-        {
-          headers: {
-            "ngrok-skip-browser-warning": "69420",
-          },
-        },
       );
       console.log("LOGIN RESPONSE:", response.data);
       const user = response.data.user;

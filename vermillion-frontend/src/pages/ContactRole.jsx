@@ -19,8 +19,7 @@ const ContactRole = () => {
     const fetchContacts = async () => {
       try {
         const response = await axios.get(
-                 "http://127.0.0.1:8000/api/employees",
-          { headers: { "ngrok-skip-browser-warning": "69420" } },
+                 "http://127.0.0.1:8000/api/employees"
         );
 
         if (Array.isArray(response.data)) {
