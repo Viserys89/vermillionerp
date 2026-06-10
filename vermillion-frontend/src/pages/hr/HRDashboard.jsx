@@ -72,7 +72,7 @@ const HRDashboard = () => {
             },
           },
         );
-        setEmployees(response.data); // Memasukkan data dari Laravel ke dalam state
+        setEmployees(response.data);
       } catch (error) {
         console.error("Gagal mengambil data karyawan:", error);
         showNotification("error", "Gagal memuat data dari server.");
@@ -82,7 +82,6 @@ const HRDashboard = () => {
     fetchEmployees();
   }, []);
 
-  // Filter Data
   const filteredEmployees = employees.filter((emp) => {
     const matchesSearch =
       (emp.name?.toLowerCase() || "").includes(searchTerm.toLowerCase()) ||
@@ -134,8 +133,6 @@ const HRDashboard = () => {
     }
 
     try {
-      // Kita siapkan data yang akan dikirim ke Laravel.
-      // Ubah 'bankAccount' dari React state menjadi 'bank_account' sesuai kolom di database MySQL
       const payload = {
         ...formData,
         password: formData.password,
@@ -143,13 +140,10 @@ const HRDashboard = () => {
       };
 
       if (selectedEmployee) {
-        // PROSES EDIT DATA (PUT)
         const response = await axios.put(
           `http://localhost:8000/api/employees/${selectedEmployee.id}`,
           payload,
         );
-
-        // Update state lokal dengan data dari server
         setEmployees(
           employees.map((emp) =>
             emp.id === selectedEmployee.id ? response.data : emp,
@@ -160,13 +154,11 @@ const HRDashboard = () => {
           `Karyawan ${formData.name} berhasil diperbarui!`,
         );
       } else {
-        // PROSES TAMBAH DATA (POST)
         const response = await axios.post(
           "http://localhost:8000/api/employees",
           payload,
         );
 
-        // Tambahkan data baru dari server ke state lokal
         setEmployees([...employees, response.data]);
         showNotification(
           "success",
@@ -186,7 +178,6 @@ const HRDashboard = () => {
   const handleConfirmDelete = async () => {
     if (employeeToDelete) {
       try {
-        // PROSES HAPUS DATA (DELETE)
         await axios.delete(
           `http://localhost:8000/api/employees/${employeeToDelete.id}`,
         );
@@ -211,18 +202,6 @@ const HRDashboard = () => {
     setIsDeleteConfirmOpen(true);
   };
 
-  // const handleConfirmDelete = () => {
-  //   if (employeeToDelete) {
-  //     setEmployees(employees.filter((emp) => emp.id !== employeeToDelete.id));
-  //     showNotification(
-  //       "success",
-  //       `Karyawan ${employeeToDelete.name} berhasil dihapus!`,
-  //     );
-  //     setIsDeleteConfirmOpen(false);
-  //     setEmployeeToDelete(null);
-  //   }
-  // };
-
   const handleExport = () => {
     // Membuat header CSV
     const csvHeader = [
@@ -238,9 +217,7 @@ const HRDashboard = () => {
       "No. Rekening",
     ].join(",");
 
-    // Mapping data karyawan ke baris CSV
     const csvRows = employees.map((emp) => {
-      // Alamat dibungkus tanda kutip agar koma di dalam alamat tidak memisahkan kolom
       const safeAddress = emp.address ? `"${emp.address}"` : "";
 
       return [
@@ -253,7 +230,7 @@ const HRDashboard = () => {
         emp.role,
         emp.status,
         emp.contract || "",
-        emp.bank_account || "", // Sesuai dengan kolom di database
+        emp.bank_account || "",
       ].join(",");
     });
 
@@ -272,18 +249,14 @@ const HRDashboard = () => {
     if (!value) return "";
     const str = String(value).trim();
 
-    // Sudah format benar: "1995-03-15"
     if (/^\d{4}-\d{2}-\d{2}$/.test(str)) return str;
 
-    // Format M/D/YY atau M/D/YYYY (hasil raw:false dari SheetJS)
     const mdyMatch = str.match(/^(\d{1,2})\/(\d{1,2})\/(\d{2,4})$/);
     if (mdyMatch) {
       let [, m, d, y] = mdyMatch;
       if (y.length === 2) y = parseInt(y) > 30 ? `19${y}` : `20${y}`;
       return `${y}-${String(m).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
     }
-
-    // Fallback: coba parse dengan Date
     const date = new Date(str);
     if (!isNaN(date)) {
       return date.toISOString().split("T")[0];
@@ -465,8 +438,6 @@ const HRDashboard = () => {
             <Download size={18} /> Export
           </button>
         </div>
-
-        {/* Filters - Saat filter diubah, pagination kembali ke 1 */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
           <div className="relative col-span-1 sm:col-span-1">
             <Search
@@ -575,7 +546,6 @@ const HRDashboard = () => {
                       </td>
                       <td className="px-4 py-3">
                         <div className="flex gap-1 md:gap-2">
-                          {/* FIX BUTTON: Warna lebih soft, outline ditiadakan biar bersih, jelas nggak disembunyiin */}
                           <button
                             onClick={() => handleOpenForm(emp)}
                             className="p-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-all text-xs md:text-sm font-medium"
@@ -715,8 +685,8 @@ const HRDashboard = () => {
                   {selectedEmployee ? "(Kosongkan jika tidak diubah)" : "*"}
                 </label>
                 <input
-                  type="text" // Gunakan 'text' agar HR bisa melihat password yang dibuatkan, atau 'password' jika ingin disensor
-                  required={!selectedEmployee} // Wajib diisi JIKA karyawan baru (bukan mode edit)
+                  type="text"
+                  required={!selectedEmployee}
                   value={formData.password || ""}
                   onChange={(e) =>
                     setFormData({ ...formData, password: e.target.value })
@@ -854,7 +824,6 @@ const HRDashboard = () => {
                 >
                   Simpan
                 </button>
-                {/* FIX BUTTON BATAL: Warna abu-abu cerah tanpa border ketuaan */}
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
@@ -867,8 +836,6 @@ const HRDashboard = () => {
           </div>
         </div>
       )}
-
-      {/* Delete Confirmation Modal */}
       {isDeleteConfirmOpen && employeeToDelete && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[1000] p-4">
           <div className="bg-white rounded-2xl shadow-xl max-w-md w-[90%] p-6 md:p-8 animate-slide-up">
@@ -894,7 +861,6 @@ const HRDashboard = () => {
               >
                 Hapus
               </button>
-              {/* FIX BUTTON BATAL: Konsisten dengan form tambah */}
               <button
                 onClick={() => {
                   setIsDeleteConfirmOpen(false);
@@ -908,8 +874,6 @@ const HRDashboard = () => {
           </div>
         </div>
       )}
-
-      {/* Import Modal */}
       {isImportOpen && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[1000] p-4">
           <div className="bg-white rounded-2xl shadow-xl max-w-md w-[90%] p-6 md:p-8 animate-slide-up">
@@ -939,7 +903,6 @@ const HRDashboard = () => {
                 onChange={handleImportFile}
                 className="w-full text-sm file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-brand-orange file:text-white hover:file:bg-orange-600 cursor-pointer"
               />
-              {/* FIX BUTTON TUTUP: Konsisten abu-abu cerah */}
               <button
                 onClick={() => setIsImportOpen(false)}
                 className="w-full bg-gray-100 text-gray-700 py-3 rounded-lg font-bold hover:bg-gray-200 transition-all text-sm md:text-base"
