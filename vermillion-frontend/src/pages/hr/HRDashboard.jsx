@@ -83,7 +83,7 @@ const HRDashboard = () => {
     fetchEmployees();
   }, []);
 
-  // Filter Data
+  // Filter logic
   const filteredEmployees = employees.filter((emp) => {
     const matchesSearch =
       (emp.name?.toLowerCase() || "").includes(searchTerm.toLowerCase()) ||

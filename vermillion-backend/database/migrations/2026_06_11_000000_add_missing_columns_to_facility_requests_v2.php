@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('facility_requests', function (Blueprint $table) {
-            // Tambahkan kolom barang jika belum ada
+            // Add item request columns
             if (!Schema::hasColumn('facility_requests', 'nama_barang')) {
                 $table->string('nama_barang')->nullable()->after('user_id');
             }
@@ -23,7 +23,7 @@ return new class extends Migration
                 $table->text('deskripsi')->nullable()->after('link_toko');
             }
 
-            // Tambahkan timestamps jika belum ada
+            // Add timestamps
             if (!Schema::hasColumn('facility_requests', 'created_at')) {
                 $table->timestamp('created_at')->nullable();
             }
@@ -31,7 +31,7 @@ return new class extends Migration
                 $table->timestamp('updated_at')->nullable();
             }
 
-            // Ubah kolom lama jadi nullable
+            // Update existing columns to nullable
             $table->foreignId('facility_id')->nullable()->change();
             $table->date('request_date')->nullable()->change();
             $table->dateTime('start_datetime')->nullable()->change();

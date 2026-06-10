@@ -22,7 +22,6 @@ const HRKaryawan = () => {
   const [filterStatus, setFilterStatus] = useState("Semua");
   const [filterRole, setFilterRole] = useState("Semua");
   
-  // State untuk Modal Detail
   const [selectedEmployee, setSelectedEmployee] = useState(null);
   const [isDetailOpen, setIsDetailOpen] = useState(false);
   const [error, setError] = useState(null);
@@ -30,7 +29,6 @@ const HRKaryawan = () => {
   const roles = ["Host", "Manager", "Editor", "Admin", "Content Creator", "Producer", "Finance", "HR", "Procurement", "Technician", "Performance"];
   const statuses = ["Aktif", "Tidak Aktif", "Cuti", "Resigned"];
 
-  // Fetch data dari database Laravel
   useEffect(() => {
     const fetchEmployees = async () => {
       try {
@@ -47,7 +45,7 @@ const HRKaryawan = () => {
     fetchEmployees();
   }, []);
 
-  // Filter logika
+  // Filter logic
   const filteredEmployees = employees.filter((emp) => {
     const matchesSearch =
       emp.name.toLowerCase().includes(searchTerm.toLowerCase()) ||

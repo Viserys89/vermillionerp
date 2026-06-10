@@ -56,7 +56,7 @@ const RequestHost = () => {
       setModalOpen(false);
       setSuccessOpen(true);
       
-      // Reset form
+      // Reset form data
       setFormData({
         nama_barang: '',
         link_toko: '',
@@ -70,7 +70,7 @@ const RequestHost = () => {
     }
   };
 
-  // Fungsi untuk menghapus request
+  // Handler hapus pengajuan
   const handleDeleteRequest = async (id) => {
     const confirmDelete = window.confirm('Yakin ingin menghapus pengajuan ini?');
     if (!confirmDelete) return;
@@ -91,7 +91,7 @@ const RequestHost = () => {
         Request Barang
       </h1>
 
-      {/* Header Tabel */}
+      {/* Header tabel */}
       <div className="flex items-center gap-4 mb-4">
         <h2 className="text-xl font-medium">Tabel Request</h2>
         <button

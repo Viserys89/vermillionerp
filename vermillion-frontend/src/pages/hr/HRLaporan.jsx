@@ -118,7 +118,7 @@ const HRLaporan = () => {
 
   return (
     <div className="animate-fade-in space-y-4 md:space-y-6">
-      {/* Toast Notification Element */}
+      {/* Toast notifications */}
       {notification && (
         <div
           className={`fixed top-4 right-4 z-[10000] p-4 rounded-xl backdrop-blur-xl border ${
@@ -423,3 +423,4 @@ const HRLaporan = () => {
   );
 };
 export default HRLaporan;
+poran;

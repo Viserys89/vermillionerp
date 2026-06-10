@@ -322,7 +322,7 @@ const HRIzin = () => {
                   </td>
 
                   <td className="px-4 py-3">
-                    {leave.date_range}
+                    {leave.start_date} - {leave.end_date}
                   </td>
 
                   <td className="px-4 py-3">

@@ -18,7 +18,7 @@ const LaporanHost = () => {
   const fetchReports = () => {
     fetch(`${API_BASE_URL}/host/${user.id}/reports`, {
       headers: {
-            'Accept': 'application/json', // <--- INI PENTING
+            'Accept': 'application/json',
             'Content-Type': 'application/json'
         }
     })

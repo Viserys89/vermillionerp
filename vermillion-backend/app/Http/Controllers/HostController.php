@@ -19,7 +19,7 @@ class HostController extends Controller
             return response()->json(['message' => 'User not found'], 404);
         }
 
-        // Pastikan profile ada, jika tidak ada buat default
+        // Pastikan profil host tersedia, buat profil default jika belum ada
         $profile = $user->hostProfile ?: HostProfile::firstOrCreate(['user_id' => $user->id], ['team' => '-', 'total_diamonds' => 0]);
 
         $total_diamonds = $profile->total_diamonds;

@@ -274,7 +274,7 @@ const IzinHost = () => {
         </div>
       )}
 
-      {/* SUCCESS */}
+      {/* Success notification modal */}
       {successOpen && (
         <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
 
@@ -308,4 +308,4 @@ const IzinHost = () => {
   );
 };
 
-export default IzinHost;
+export default IzinHost;st;

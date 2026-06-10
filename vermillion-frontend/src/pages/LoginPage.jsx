@@ -72,7 +72,7 @@ const LoginPage = () => {
 
   return (
     <div className="min-h-screen flex flex-col justify-center items-center bg-gradient-to-br from-[#FF8000] to-white p-5">
-      {/* Wrapper (Card) */}
+      {/* Login card container */}
       <div className="w-full max-w-[420px] bg-white/65 backdrop-blur-xl border border-orange-100 rounded-[20px] p-8 shadow-2xl animate-slide-up">
         <div className="flex flex-col items-center mb-8 animate-fade-in">
           <div className="mb-6 animate-fade-in">
@@ -86,7 +86,7 @@ const LoginPage = () => {
           </p>
         </div>
         <form onSubmit={handleLogin} className="flex flex-col gap-5">
-          {/* Input Email */}
+          {/* Email input */}
           <div className="relative group">
             <input
               type="text"
@@ -98,7 +98,7 @@ const LoginPage = () => {
             <Mail className="absolute right-4 top-1/2 -translate-y-1/2 text-orange-400/60 w-5 h-5" />
           </div>
 
-          {/* Input Password */}
+          {/* Password input */}
           <div className="relative group">
             <input
               type="password"

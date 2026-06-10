@@ -10,7 +10,7 @@ const api = axios.create({
   },
 });
 
-// Helper for multipart/form-data (uploads)
+// API instance for multipart/form-data uploads
 export const apiFormData = axios.create({
   baseURL: API_BASE_URL,
   headers: {
