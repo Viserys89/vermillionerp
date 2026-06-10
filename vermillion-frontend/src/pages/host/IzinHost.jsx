@@ -1,21 +1,18 @@
-/* eslint-disable react-hooks/set-state-in-effect */
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import {
-  Plus,
-  CheckCircle,
-  Clock,
-  XCircle,
-  Send,
-  X
-} from "lucide-react";
+import { Plus, CheckCircle, Clock, XCircle, Send, X } from "lucide-react";
 
 const API_URL = "http://localhost:8000/api";
 
 const IzinHost = () => {
+  const user = JSON.parse(localStorage.getItem("user") || "{}");
+  const employeeId = user?.id;
+
+  const [leaves, setLeaves] = useState([]);
   const [isModalOpen, setModalOpen] = useState(false);
   const [successOpen, setSuccessOpen] = useState(false);
-  const [leaves, setLeaves] = useState([]);
+  
+  const [refreshKey, setRefreshKey] = useState(0);
 
   const [formData, setFormData] = useState({
     leave_type: "",
@@ -23,33 +20,32 @@ const IzinHost = () => {
     reason: ""
   });
 
-  const user = JSON.parse(
-    localStorage.getItem("user")
-  );
-
-  const employeeId = user?.id;
-
-  const loadLeaves = async () => {
-    try {
-      const response = await axios.get(
-        `${API_URL}/leaves`
-      );
-
-      const myLeaves = response.data.filter(
-        (item) => item.employee_id === employeeId
-      );
-
-      setLeaves(myLeaves);
-    } catch (error) {
-      console.error(error);
-    }
-  };
 
   useEffect(() => {
+    let isMounted = true;
+
+    const loadLeaves = async () => {
+      try {
+        const response = await axios.get(`${API_URL}/leaves`);
+        if (isMounted) {
+          const myLeaves = response.data.filter(
+            (item) => item.employee_id === employeeId
+          );
+          setLeaves(myLeaves);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
     if (employeeId) {
       loadLeaves();
     }
-  }, [employeeId]);
+
+    return () => {
+      isMounted = false;
+    };
+  }, [employeeId, refreshKey]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -71,7 +67,7 @@ const IzinHost = () => {
         reason: ""
       });
 
-      await loadLeaves();
+      setRefreshKey(old => old + 1);
 
     } catch (error) {
       console.error(error);
@@ -105,7 +101,6 @@ const IzinHost = () => {
       </span>
     );
   };
-
   return (
     <div className="space-y-8 animate-fade-in">
 

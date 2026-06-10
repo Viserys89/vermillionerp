@@ -7,14 +7,11 @@ use Illuminate\Http\Request;
 
 class EmployeeController extends Controller
 {
-    // Mengambil semua data
     public function index()
     {
-        // Menampilkan data dengan urutan terbaru di atas
         return response()->json(User::orderBy('id', 'desc')->get());
     }
 
-    // Menambah data karyawan baru
    public function store(Request $request)
     {
         $request->validate([
@@ -28,14 +25,12 @@ class EmployeeController extends Controller
         ]);
 
         $data = $request->all();
-        // Enkripsi password yang diinputkan oleh HR
         $data['password'] = bcrypt($request->password); 
 
         $employee = User::create($data);
         return response()->json($employee, 201);
     }
 
-    // Memperbarui data karyawan (Edit)
     public function update(Request $request, $id)
     {
         $employee = User::findOrFail($id);
@@ -43,18 +38,15 @@ class EmployeeController extends Controller
         $request->validate([
             'name' => 'required|string|max:150',
             'email' => 'required|email|unique:users,email,' . $id,
-            'password' => 'nullable|string|min:6', // Password BOLEH kosong saat diedit
+            'password' => 'nullable|string|min:6',
             'role' => 'required|string',
         ]);
 
         $data = $request->all();
 
-        // Cek apakah HR mengisi kolom password saat edit
         if ($request->filled('password')) {
-            // Jika diisi, enkripsi password barunya
             $data['password'] = bcrypt($request->password);
         } else {
-            // Jika dikosongkan, hapus dari array data agar password lama tidak tertimpa menjadi kosong
             unset($data['password']);
         }
 
@@ -62,7 +54,6 @@ class EmployeeController extends Controller
         return response()->json($employee);
     }
 
-    // Menghapus data karyawan
     public function destroy($id)
     {
         $employee = User::findOrFail($id);

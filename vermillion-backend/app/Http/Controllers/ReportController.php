@@ -41,8 +41,6 @@ public function store(Request $request)
    public function destroy($id)
 {
     $report = Report::findOrFail($id);
-    
-    // Hapus file dari storage
     if (Storage::disk('public')->exists($report->file_path)) {
         Storage::disk('public')->delete($report->file_path);
     }

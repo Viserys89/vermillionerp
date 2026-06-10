@@ -7,15 +7,12 @@ use Illuminate\Http\Request;
 
 class LeaveController extends Controller
 {
-    // 1. [HR] Melihat semua pengajuan izin
     public function index()
     {
-        // Mengambil data izin sekaligus data user-nya, urut dari yang paling baru
         $leaves = Leave::with('user')->orderBy('created_at', 'desc')->get();
         return response()->json($leaves);
     }
 
-    // 2. [HOST/KARYAWAN] Mengajukan izin baru
 public function store(Request $request)
 {
     try {
@@ -51,7 +48,6 @@ public function store(Request $request)
     }
 }
 
-    // 3. [HR] Mengubah status izin (Approve/Reject)
     public function updateStatus(Request $request, $id)
     {
         $request->validate([

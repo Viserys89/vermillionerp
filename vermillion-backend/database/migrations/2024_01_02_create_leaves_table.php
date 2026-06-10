@@ -12,8 +12,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('employee_id')->constrained('users')->onDelete('cascade');
             $table->enum('leave_type', ['Cuti', 'Izin']);
-            $table->date('start_date');
-            $table->date('end_date');
+            $table->string('date_range'); 
             $table->text('reason')->nullable();
             $table->enum('status', ['Pending', 'Approved', 'Rejected'])->default('Pending');
             $table->timestamps();

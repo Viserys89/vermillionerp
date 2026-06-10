@@ -44,7 +44,6 @@ const ProfilePage = () => {
   };
 
   const handleWhatsAppHR = () => {
-    // Ganti dengan nomor WA HR yang sebenarnya
     window.open("https://wa.me/6281234567890", "_blank");
   };
   const handleLogout = () => {

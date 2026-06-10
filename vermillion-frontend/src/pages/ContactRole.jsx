@@ -15,7 +15,6 @@ const ContactRole = () => {
   const [activeFilter, setActiveFilter] = useState("All");
   const [loading, setLoading] = useState(true);
 
-  // Ambil data dari API Laravel saat halaman dibuka
   useEffect(() => {
     const fetchContacts = async () => {
       try {
@@ -24,7 +23,6 @@ const ContactRole = () => {
           { headers: { "ngrok-skip-browser-warning": "69420" } },
         );
 
-        // LANGSUNG ambil response.data karena server ngirim array langsung
         if (Array.isArray(response.data)) {
           setContactData(response.data);
         } else {
@@ -40,15 +38,11 @@ const ContactRole = () => {
     fetchContacts();
   }, []);
 
-  // Membuat tombol filter (Chips) otomatis mengikuti nama tim yang unik dari DB
  const divisions = useMemo(() => {
   const baseDivisions = ["All"];
   
   contactData.forEach((user) => {
-    // Cari nilai divisi yang valid dari kolom apapun yang ada isinya
     const teamValue = user.team || user.divisi || user.department || user.role;
-    
-    // HANYA masukkan ke list kalau ada isinya dan belum ada di tombol filter
     if (teamValue && !baseDivisions.includes(teamValue)) {
       baseDivisions.push(teamValue);
     }
@@ -57,10 +51,8 @@ const ContactRole = () => {
   return baseDivisions;
 }, [contactData]);
 
-  // Filter pencarian berdasarkan nama atau tim
   const filteredContacts = useMemo(() => {
   return contactData.filter((contact) => {
-    // Standarisasi cara ambil divisi agar sama persis dengan 'divisions'
     const teamValue = contact.team || contact.divisi || contact.department || contact.role || "";
     
     const searchLower = searchTerm.toLowerCase();
@@ -68,8 +60,6 @@ const ContactRole = () => {
     const teamMatch = teamValue.toLowerCase().includes(searchLower);
     
     const matchesSearch = nameMatch || teamMatch;
-    
-    // Sekarang filter 'All' atau berdasarkan 'teamValue' yang sudah terstandarisasi
     const matchesFilter = activeFilter === "All" || teamValue === activeFilter;
     
     return matchesSearch && matchesFilter;
@@ -78,7 +68,6 @@ const ContactRole = () => {
 
   const openWhatsApp = (number) => {
     if (!number) return alert("Nomor WhatsApp tidak tersedia");
-    // Membersihkan karakter spasi atau simbol jika ada di DB
     const cleanNumber = number.toString().replace(/[^0-9]/g, "");
     window.open(`https://wa.me/${cleanNumber}`, "_blank");
   };
@@ -151,7 +140,6 @@ const ContactRole = () => {
                     <h4 className="font-bold text-gray-800">
                       {contact.name || "Tanpa Nama"}
                     </h4>
-                    {/* KITA CEK SEMUA OPSI NAMA KOLOM TEAM DI SINI */}
                     <p className="text-[10px] font-bold text-orange-500 tracking-widest mb-1 uppercase">
                       {contact.team ||
                         contact.divisi ||

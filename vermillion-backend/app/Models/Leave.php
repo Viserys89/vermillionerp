@@ -15,11 +15,8 @@ class Leave extends Model
         'reason', 
         'status'
     ];
-
-    // Relasi untuk mengambil data karyawan yang mengajukan
     public function user()
     {
         return $this->belongsTo(User::class, 'employee_id');
     }
-    public $timestamps = false;
 }

@@ -6,59 +6,53 @@ import ConfirmationModal from '../../components/common/ConfirmationModal';
 const API_URL = `http://127.0.0.1:8000/api`;
 
 const PengaduanHost = () => {
-  const [view, setView] = useState('list'); // 'list' atau 'editor'
+  const [view, setView] = useState('list');
   const [notification, setNotification] = useState(null);
   
-  //form pengaduan
+  // form pengaduan
   const [modules, setModules] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  //ambil user
-  const user = JSON.parse(
-  localStorage.getItem("user") || "{}"
-);
+  // STATE BARU: Pemicu untuk me-refresh data tabel
+  const [refreshKey, setRefreshKey] = useState(0);
 
-const [loading, setLoading] = useState(true);
+  // ambil user
+  const user = JSON.parse(localStorage.getItem("user") || "{}");
+  const employeeId = user?.id;
 
-const employeeId = user?.id;
-//load complaints
-const loadComplaints = async () => {
-  try {
+  useEffect(() => {
+    let isMounted = true;
 
-    setLoading(true);
+    const fetchComplaints = async () => {
+      try {
+        if (isMounted) setLoading(true);
+        const response = await axios.get(`${API_URL}/complaints`);
+        
+        if (isMounted) {
+          const myComplaints = response.data.filter(
+            item => item.employee_id === employeeId
+          );
+          setModules(myComplaints);
+        }
+      } catch (error) {
+        console.error(error);
+      } finally {
+        if (isMounted) setLoading(false);
+      }
+    };
 
-    const response = await axios.get(
-      `${API_URL}/complaints`
-    );
+    if (employeeId) {
+      fetchComplaints();
+    }
 
-    const myComplaints = response.data.filter(
-      item => item.employee_id === employeeId
-    );
-
-    setModules(myComplaints);
-
-  } catch (error) {
-
-    console.error(error);
-
-  } finally {
-
-    setLoading(false);
-
-  }
-};
-
-useEffect(() => {
-  if (employeeId) {
-    loadComplaints();
-  }
-}, [employeeId]);
-
-
+    return () => {
+      isMounted = false;
+    };
+  }, [employeeId, refreshKey])
 
   // State untuk Editor
   const [editorTitle, setEditorTitle] = useState('');
   const [editorContent, setEditorContent] = useState('');
-  // const [isSimulatingUpload, setIsSimulatingUpload] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
   const [currentEditId, setCurrentEditId] = useState(null);
 
@@ -86,65 +80,39 @@ useEffect(() => {
     setView('editor');
   };
 
- const handleSave = async () => {
+  const handleSave = async () => {
+    if (!editorTitle) {
+      alert("Judul wajib diisi");
+      return;
+    }
 
-  if (!editorTitle) {
-    alert("Judul wajib diisi");
-    return;
-  }
-
-  try {
-
-  if (isEditMode) {
-
-    await axios.put(
-      `${API_URL}/complaints/${currentEditId}`,
-      {
-        issue_title: editorTitle,
-        issue_description: editorContent
+    try {
+      if (isEditMode) {
+        await axios.put(`${API_URL}/complaints/${currentEditId}`, {
+          issue_title: editorTitle,
+          issue_description: editorContent
+        });
+        showNotification('Pengaduan berhasil diperbarui!');
+      } else {
+        await axios.post(`${API_URL}/complaints`, {
+          employee_id: employeeId,
+          report_date: new Date().toISOString().split('T')[0],
+          issue_title: editorTitle,
+          issue_description: editorContent
+        });
+        showNotification('Pengaduan berhasil dikirim!');
       }
-    );
+      setRefreshKey(oldKey => oldKey + 1);
 
-    showNotification(
-      'Pengaduan berhasil diperbarui!'
-    );
+      setView('list');
+      setEditorTitle('');
+      setEditorContent('');
 
-  } else {
-
-    await axios.post(
-      `${API_URL}/complaints`,
-      {
-        employee_id: employeeId,
-        report_date: new Date()
-          .toISOString()
-          .split('T')[0],
-        issue_title: editorTitle,
-        issue_description: editorContent
-      }
-    );
-
-    showNotification(
-      'Pengaduan berhasil dikirim!'
-    );
-  }
-
-  await loadComplaints();
-
-  setView('list');
-
-  setEditorTitle('');
-  setEditorContent('');
-
-} catch (error) {
-
-  console.error(error);
-
-  alert(
-    'Gagal menyimpan pengaduan'
-  );
-
-}
-};
+    } catch (error) {
+      console.error(error);
+      alert('Gagal menyimpan pengaduan');
+    }
+  };
 
   const handleDeleteClick = (mod) => {
     setSelectedMod(mod);
@@ -152,23 +120,17 @@ useEffect(() => {
   };
 
   const confirmDelete = async () => {
-  try {
-    await axios.delete(
-      `${API_URL}/complaints/${selectedMod.id}`
-    );
+    try {
+      await axios.delete(`${API_URL}/complaints/${selectedMod.id}`);
+      setRefreshKey(oldKey => oldKey + 1);
 
-    await loadComplaints();
-
-    showNotification(
-      "Pengaduan berhasil dihapus"
-    );
-
-  } catch (error) {
-    console.error(error);
-    alert("Gagal menghapus pengaduan");
-  }
-};
-  
+      showNotification("Pengaduan berhasil dihapus");
+      setDeleteModalOpen(false);
+    } catch (error) {
+      console.error(error);
+      alert("Gagal menghapus pengaduan");
+    }
+  };
 
   return (
     <div className="animate-fade-in space-y-4 md:space-y-6 h-[calc(100vh-80px)] flex flex-col">

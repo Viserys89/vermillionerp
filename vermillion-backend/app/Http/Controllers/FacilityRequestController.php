@@ -25,8 +25,7 @@ class FacilityRequestController extends Controller
                 'link_toko'    => $request->link_toko,
                 'deskripsi'    => $request->deskripsi,
                 'status'       => 'Pending',
-                // Tambahkan ini agar tidak error
-                'facility_id'  => 1, // Atau ID fasilitas default yang ada di tabel 'facilities'
+                'facility_id'  => 1,
                 'request_date' => now(),
                 'start_datetime' => now(),
                 'end_datetime' => now(),

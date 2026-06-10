@@ -14,23 +14,15 @@ class FinanceController extends Controller
     public function getDashboard(Request $request)
     {
         $query = HostReport::with(['host.hostProfile', 'evidences']);
-
-        // Filter berdasarkan tanggal
         if ($request->date) {
             $query->whereDate('report_date', $request->date);
         }
-
-        // Filter berdasarkan shift
         if ($request->shift && $request->shift !== 'Pilih Shift') {
             $query->where('shift_schedule', $request->shift);
         }
-
-        // Filter berdasarkan status
         if ($request->status && $request->status !== 'Pilih Status') {
             $query->where('status', $request->status);
         }
-
-        // Filter berdasarkan nama host
         if ($request->search) {
             $query->whereHas('host', function($q) use ($request) {
                 $q->where('name', 'like', '%' . $request->search . '%');
@@ -90,7 +82,6 @@ class FinanceController extends Controller
         $incomes = [];
 
         foreach ($hosts as $host) {
-            // Hitung data berdasarkan periode (bulan & tahun) dari host_reports yang disetujui
             $reports = HostReport::where('host_id', $host->id)
                 ->where('status', 'Disetujui')
                 ->whereMonth('report_date', $month)
@@ -102,8 +93,7 @@ class FinanceController extends Controller
             
             $profile = HostProfile::where('user_id', $host->id)->first();
             $team = $profile ? $profile->team : '-';
-            
-            // Kalkulasi: Gaji Pokok Rp 100.000 + (Rp 25.000 per 5.000 diamond)
+          
             $basic_salary = 100000;
             $bonus = floor($total_diamonds / 5000) * 25000;
             $total_income = ($total_shifts > 0) ? ($basic_salary + $bonus) : 0;
@@ -119,7 +109,6 @@ class FinanceController extends Controller
             ];
         }
 
-        // Filter search di level collection (atau bisa di query)
         if ($request->search) {
             $incomes = array_values(array_filter($incomes, function($item) use ($request) {
                 return str_contains(strtolower($item['name']), strtolower($request['search'])) || 
