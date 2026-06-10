@@ -78,9 +78,9 @@ const Topbar = ({ toggleSidebar, roleName }) => {
                 <User size={16} /> Profil
               </button>
             </Link>
-            <button className="w-full px-5 py-3 text-left text-sm flex items-center gap-2 hover:text-orange-500 hover:bg-orange-50/50 transition-colors">
+            {/* <button className="w-full px-5 py-3 text-left text-sm flex items-center gap-2 hover:text-orange-500 hover:bg-orange-50/50 transition-colors">
               <Settings size={16} /> Settings
-            </button>
+            </button> */}
             <hr className="my-1 border-gray-100" />
 
             {/* Ubah tag <a> menjadi <button> dan panggil handleLogout */}
